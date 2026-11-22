@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HydraClient — Minecraft client 2026. Пре-восходство. Скорость. Победа.">
+  <title>HydraClient — Minecraft Client 2026</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="HydraClient — наверх">
+        <span class="brand-mark">H</span>
+        <span>Hydra<b>Client</b></span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Открыть меню" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Главное меню">
+        <a href="#top">главная</a>
+        <a href="#features">функции</a>
+        <a href="#video-review">Видеообзор</a>
+        <a href="#pricing">Купить</a>
+        <a href="#support">Поддержка</a>
+      </nav>
+
+      <button class="btn btn-small btn-primary buy-trigger" data-plan="standard">Купить</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <div class="eyebrow">MINECRAFT CLIENT 2026</div>
+          <h1>Hydra<span>Client</span></h1>
+          <p class="tagline"><em>ПРЕ-восходство.</em> скорость. <em>ПОБЕДА.</em></p>
+          <p class="lead">Мы не просто клиент — мы стиль игры.</p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary buy-trigger" data-plan="standard">Купить сейчас</button>
+            <a class="btn btn-outline" href="#features">Узнать больше</a>
+          </div>
+
+          <div class="hero-quick" aria-label="Быстрые ссылки">
+            <button class="quick-btn buy-trigger" data-plan="standard">Купить</button>
+            <a class="quick-btn" href="#video-review">Видеообзор</a>
+            <a class="quick-btn" href="#support" data-support-link>Поддержка</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" id="video">
+          <div class="video-card">
+            <div class="video-inner">
+              <span class="play" aria-hidden="true">▶</span>
+              <p>Видео скоро появится</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker">Функции</span>
+          <h2>Всё для победы</h2>
+          <p>Модули, собственный интерфейс и гибкие настройки — в одном клиенте.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-num">01</span>
+            <h3>Combat</h3>
+            <p>Aim Assist, Attack Aura, Trigger Bot, Back Track, Hit Boxes, Velocity.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-num">02</span>
+            <h3>Movement</h3>
+            <p>Flight, Spider, NoSlow, AutoSprint, AirStuck, Elytra Helper.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-num">03</span>
+            <h3>Render</h3>
+            <p>ESP, Chams, Skeleton, Shulker Preview, Motion Blur, кастомный HUD.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-num">04</span>
+            <h3>Player</h3>
+            <p>AutoTotem, AutoEat, AutoMine, AutoSell и другие модули автоматизации.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-num">05</span>
+            <h3>Интерфейс</h3>
+            <p>Свой ClickGUI, HUD, анимации и MSDF-шрифты. Открытие — правый Shift.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-num">06</span>
+            <h3>Скриптинг</h3>
+            <p>Lua API, пресеты, команды и сохранение конфигураций.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO REVIEW -->
+    <section class="section section-alt" id="video-review">
+      <div class="container container-narrow">
+        <div class="section-head">
+          <span class="kicker">Видеообзор</span>
+          <h2>Посмотри в деле</h2>
+        </div>
+        <div class="video-card video-card-wide">
+          <div class="video-inner">
+            <span class="play" aria-hidden="true">▶</span>
+            <p>Видео скоро появится</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker">Купить</span>
+          <h2>Выбери доступ</h2>
+          <p>Цены — пример. Замени их на свои и вставь ссылки на оплату в <code>app.js</code>.</p>
+        </div>
+
+        <div class="price-grid">
+          <article class="price-card">
+            <h3>Standard</h3>
+            <div class="price"><span>490</span> ₽</div>
+            <p class="price-sub">Текущая версия клиента</p>
+            <ul>
+              <li>Полная версия</li>
+              <li>Обновления 30 дней</li>
+              <li>Поддержка</li>
+            </ul>
+            <button class="btn btn-outline buy-trigger" data-plan="standard">Купить</button>
+          </article>
+
+          <article class="price-card featured">
+            <span class="badge">Популярный</span>
+            <h3>Pro</h3>
+            <div class="price"><span>990</span> ₽</div>
+            <p class="price-sub">Все обновления год</p>
+            <ul>
+              <li>Всё из Standard</li>
+              <li>Обновления 12 месяцев</li>
+              <li>Ранний доступ к сборкам</li>
+            </ul>
+            <button class="btn btn-primary buy-trigger" data-plan="pro">Купить</button>
+          </article>
+
+          <article class="price-card">
+            <h3>Lifetime</h3>
+            <div class="price"><span>1 990</span> ₽</div>
+            <p class="price-sub">Одна оплата — навсегда</p>
+            <ul>
+              <li>Всё из Pro</li>
+              <li>Обновления без срока</li>
+              <li>Исходники для правок</li>
+            </ul>
+            <button class="btn btn-outline buy-trigger" data-plan="lifetime">Купить</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUPPORT -->
+    <section class="section section-alt" id="support">
+      <div class="container cta-inner">
+        <div>
+          <span class="kicker">Поддержка</span>
+          <h2>Есть вопросы?</h2>
+          <p>Поможем с установкой и настройкой клиента.</p>
+        </div>
+        <a class="btn btn-primary" href="#" id="support-link" data-support-link>Написать в поддержку</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year">2026</span> HydraClient. Не является продуктом Mojang или Microsoft.</span>
+      <span class="footer-note">Использование на серверах может нарушать их правила.</span>
+    </div>
+  </footer>
+
+  <!-- Оформление заказа: демо до подключения оплаты -->
+  <dialog class="order-dialog" id="order-dialog" aria-labelledby="order-title">
+    <form id="order-form" novalidate>
+      <button type="button" class="dialog-close" id="dialog-close" aria-label="Закрыть">×</button>
+      <span class="kicker">Оформление</span>
+      <h2 id="order-title">Купить HydraClient</h2>
+      <p class="dialog-sub">Укажи e-mail — на него придёт ключ и ссылка на скачивание.</p>
+
+      <label for="plan-select">Тариф</label>
+      <select id="plan-select" name="plan">
+        <option value="standard">Standard — 490 ₽</option>
+        <option value="pro" selected>Pro — 990 ₽</option>
+        <option value="lifetime">Lifetime — 1 990 ₽</option>
+      </select>
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+
+      <label for="nickname">Ник в Minecraft <span class="optional">необязательно</span></label>
+      <input type="text" id="nickname" name="nickname" placeholder="Steve" autocomplete="off">
+
+      <button type="submit" class="btn btn-primary btn-block" id="pay-button">Перейти к оплате</button>
+      <p class="dialog-status" id="dialog-status" role="status" aria-live="polite"></p>
+      <p class="dialog-legal">Нажимая кнопку, ты соглашаешься с условиями использования и правилами возврата.</p>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
