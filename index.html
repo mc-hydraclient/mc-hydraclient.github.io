@@ -51,6 +51,9 @@
       <div class="lang-dropdown" id="langDropdown"></div>
     </div>
 
+    <button class="nav-login" id="navLogin" onclick="handleNavLogin()" data-i18n="navLogin">Войти</button>
+    <button class="nav-register" id="navRegister" onclick="handleNavRegister()" data-i18n="navRegister">Регистрация</button>
+
     <a href="#pricing" class="nav-buy" data-i18n="navBuy">Купить</a>
 
     <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Меню">
@@ -67,6 +70,8 @@
   <a href="#video"    onclick="closeMobileMenu()" data-mob-i18n="nav2">Видеообзор</a>
   <a href="#pricing"  onclick="closeMobileMenu()" data-mob-i18n="nav3">Купить</a>
   <a href="#support"  onclick="closeMobileMenu()" data-mob-i18n="nav4">Поддержка</a>
+  <button class="mobile-auth" onclick="closeMobileMenu(); openAuth('register')" data-mob-i18n="navRegister">Регистрация</button>
+  <button class="mobile-auth" onclick="closeMobileMenu(); openAuth('login')" data-mob-i18n="navLogin">Войти</button>
 </div>
 
 <!-- ════════════════════════════════════════
@@ -498,6 +503,69 @@
           Написать нам
         </a>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ── -->
+<div class="modal-overlay" id="modalAuth" onclick="closeModalOutside(event,'modalAuth')">
+  <div class="modal auth-modal">
+    <div class="modal-header">
+      <h3 id="authModalTitle" data-i18n="authTabRegister">Регистрация</h3>
+      <button class="modal-close" onclick="closeModal('auth')" aria-label="Закрыть">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="authTabRegister" onclick="setAuthTab('register')" data-i18n="authTabRegister">Регистрация</button>
+        <button type="button" class="auth-tab" id="authTabLogin" onclick="setAuthTab('login')" data-i18n="authTabLogin">Вход</button>
+      </div>
+
+      <form class="auth-form" id="authRegisterForm" onsubmit="handleRegister(event)" autocomplete="off">
+        <div class="auth-field">
+          <label for="authRegLogin" data-i18n="authLoginLabel">Логин</label>
+          <input type="text" id="authRegLogin" maxlength="32" required
+                 pattern="[A-Za-z0-9_.-]{3,32}"
+                 data-i18n-placeholder="authLoginPlaceholder" placeholder="Например: hydra_player" />
+        </div>
+        <div class="auth-field">
+          <label for="authRegName" data-i18n="authNameLabel">Имя пользователя</label>
+          <input type="text" id="authRegName" maxlength="32" required
+                 data-i18n-placeholder="authNamePlaceholder" placeholder="Как тебя зовут" />
+        </div>
+        <div class="auth-field">
+          <label for="authRegPassword" data-i18n="authPasswordLabel">Пароль</label>
+          <input type="password" id="authRegPassword" minlength="8" maxlength="128" required
+                 data-i18n-placeholder="authPasswordPlaceholder" placeholder="Минимум 8 символов" />
+        </div>
+        <div class="auth-field">
+          <label for="authRegPassword2" data-i18n="authConfirmLabel">Повторите пароль</label>
+          <input type="password" id="authRegPassword2" minlength="8" maxlength="128" required
+                 data-i18n-placeholder="authConfirmPlaceholder" placeholder="Введи пароль ещё раз" />
+        </div>
+        <p class="auth-hint" data-i18n="authPasswordHint">Пароль придумываешь сам. Минимум 8 символов.</p>
+        <button type="submit" class="btn btn-primary auth-submit" data-i18n="authCreate">Создать аккаунт</button>
+      </form>
+
+      <form class="auth-form" id="authLoginForm" onsubmit="handleLogin(event)" autocomplete="off" hidden>
+        <div class="auth-field">
+          <label for="authLoginInput" data-i18n="authLoginLabel">Логин</label>
+          <input type="text" id="authLoginInput" maxlength="32" required
+                 data-i18n-placeholder="authLoginPlaceholder" placeholder="Например: hydra_player" />
+        </div>
+        <div class="auth-field">
+          <label for="authLoginPassword" data-i18n="authPasswordLabel">Пароль</label>
+          <input type="password" id="authLoginPassword" maxlength="128" required
+                 data-i18n-placeholder="authPasswordPlaceholder" placeholder="Минимум 8 символов" />
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit" data-i18n="authSignIn">Войти</button>
+      </form>
+
+      <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
+      <p class="auth-note" data-i18n="authLocalNote">Демо: аккаунт хранится только в этом браузере.</p>
     </div>
   </div>
 </div>

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupReveal();
   setupCursorGlow();
   setupSmoothLinks();
+  updateAuthUI();
 
   // Видео из конфига — показываем сразу без участия пользователя
   if (CONFIG.video.url) embedVideo(CONFIG.video.url);
@@ -180,12 +181,20 @@ function setLanguage(lang) {
     }
   });
 
+  // Плейсхолдеры форм
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+
   // Мобильное меню
   document.querySelectorAll('[data-mob-i18n]').forEach(el => {
     const key = el.getAttribute('data-mob-i18n');
     if (/^nav\d+$/.test(key)) {
       const idx = parseInt(key.slice(3));
       if (nav[idx] !== undefined) el.textContent = nav[idx];
+    } else if (t[key] !== undefined) {
+      el.textContent = t[key];
     }
   });
 
@@ -215,6 +224,7 @@ function setLanguage(lang) {
   const footerCopy    = document.getElementById('footerCopy');
   if (footerTagline) footerTagline.textContent = CONFIG.clientTagline[lang] ?? CONFIG.clientTagline.ru;
   if (footerCopy)    footerCopy.textContent    = t.footerCopy;
+  updateAuthUI();
 
   // Video section placeholder
   const vpt = document.getElementById('videoPlaceholderText');
@@ -484,7 +494,8 @@ const MODAL_IDS = {
   privacy: 'modalPrivacy',
   terms:   'modalTerms',
   rules:   'modalRules',
-  payment: 'modalPayment'
+  payment: 'modalPayment',
+  auth:    'modalAuth'
 };
 
 function openModal(key) {
@@ -531,4 +542,219 @@ function showToast(msg, type = 'success') {
 
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+
+/* ════════════════════════════════════════
+   ACCOUNTS — локальная демо-регистрация
+   Пароль придумывает пользователь.
+   Хранится только salt + PBKDF2-хеш в браузере.
+   ════════════════════════════════════════ */
+const ACCOUNTS_KEY = 'hydraclient_accounts_v1';
+const SESSION_KEY  = 'hydraclient_session_v1';
+
+function authText(key) {
+  return CONFIG.i18n[currentLang]?.[key] ?? CONFIG.i18n.ru[key] ?? key;
+}
+
+function getAccounts() {
+  try {
+    const raw = localStorage.getItem(ACCOUNTS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveAccounts(accounts) {
+  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+}
+
+function getSessionLogin() {
+  return localStorage.getItem(SESSION_KEY);
+}
+
+function bytesToBase64(bytes) {
+  let str = '';
+  bytes.forEach(b => { str += String.fromCharCode(b); });
+  return btoa(str);
+}
+
+function base64ToBytes(b64) {
+  const str = atob(b64);
+  const out = new Uint8Array(str.length);
+  for (let i = 0; i < str.length; i++) out[i] = str.charCodeAt(i);
+  return out;
+}
+
+async function derivePasswordHash(password, saltBytes) {
+  if (!window.crypto?.subtle) throw new Error('Crypto unavailable');
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: saltBytes, iterations: 150000, hash: 'SHA-256' },
+    key,
+    256
+  );
+  return bytesToBase64(new Uint8Array(bits));
+}
+
+function setAuthStatus(message = '', type = 'info') {
+  const el = document.getElementById('authStatus');
+  if (!el) return;
+  el.textContent = message;
+  el.className = `auth-status ${message ? type : ''}`.trim();
+}
+
+function setAuthTab(mode) {
+  const isRegister = mode === 'register';
+  const regForm   = document.getElementById('authRegisterForm');
+  const loginForm = document.getElementById('authLoginForm');
+  const regTab    = document.getElementById('authTabRegister');
+  const loginTab  = document.getElementById('authTabLogin');
+  const title     = document.getElementById('authModalTitle');
+
+  if (regForm)   regForm.hidden   = !isRegister;
+  if (loginForm) loginForm.hidden = isRegister;
+  regTab?.classList.toggle('active', isRegister);
+  loginTab?.classList.toggle('active', !isRegister);
+  if (title) title.textContent = authText(isRegister ? 'authTabRegister' : 'authTabLogin');
+  setAuthStatus('');
+}
+
+function openAuth(mode = 'register') {
+  closeAllModals();
+  setAuthTab(mode);
+  openModal('auth');
+  const firstInput = document.getElementById(mode === 'register' ? 'authRegLogin' : 'authLoginInput');
+  setTimeout(() => firstInput?.focus(), 60);
+}
+
+function handleNavLogin() {
+  const acc = currentAccount();
+  if (acc) {
+    showToast(`${authText('authWelcome')} ${acc.name}`, 'info');
+  } else {
+    openAuth('login');
+  }
+}
+
+function handleNavRegister() {
+  if (getSessionLogin()) {
+    logoutAccount();
+  } else {
+    openAuth('register');
+  }
+}
+
+function currentAccount() {
+  const login = getSessionLogin();
+  if (!login) return null;
+  return getAccounts().find(a => a.loginLower === login) ?? null;
+}
+
+function updateAuthUI() {
+  const loginBtn = document.getElementById('navLogin');
+  const registerBtn = document.getElementById('navRegister');
+  const acc = currentAccount();
+
+  if (loginBtn) {
+    loginBtn.textContent = acc ? acc.name : authText('navLogin');
+    loginBtn.classList.toggle('is-user', !!acc);
+  }
+  if (registerBtn) {
+    registerBtn.textContent = acc ? authText('authLogout') : authText('navRegister');
+    registerBtn.classList.toggle('is-logout', !!acc);
+  }
+}
+
+async function handleRegister(event) {
+  event.preventDefault();
+
+  const login    = document.getElementById('authRegLogin')?.value.trim() ?? '';
+  const name     = document.getElementById('authRegName')?.value.trim() ?? '';
+  const password = document.getElementById('authRegPassword')?.value ?? '';
+  const confirm  = document.getElementById('authRegPassword2')?.value ?? '';
+
+  if (!/^[A-Za-z0-9_.-]{3,32}$/.test(login)) {
+    return setAuthStatus(authText('authErrLoginFormat'), 'error');
+  }
+  if (name.length < 2 || name.length > 32) {
+    return setAuthStatus(authText('authErrName'), 'error');
+  }
+  if (password.length < 8) {
+    return setAuthStatus(authText('authErrPassword'), 'error');
+  }
+  if (password !== confirm) {
+    return setAuthStatus(authText('authErrPasswordMismatch'), 'error');
+  }
+
+  const accounts = getAccounts();
+  if (accounts.some(a => a.loginLower === login.toLowerCase())) {
+    return setAuthStatus(authText('authErrLoginTaken'), 'error');
+  }
+
+  try {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const hash = await derivePasswordHash(password, salt);
+    accounts.push({
+      login,
+      loginLower: login.toLowerCase(),
+      name,
+      salt: bytesToBase64(salt),
+      hash,
+      createdAt: new Date().toISOString()
+    });
+    saveAccounts(accounts);
+
+    document.getElementById('authRegisterForm')?.reset();
+    const loginInput = document.getElementById('authLoginInput');
+    if (loginInput) loginInput.value = login;
+    setAuthTab('login');
+    setAuthStatus(authText('authSuccessRegistered'), 'success');
+    showToast(authText('authSuccessRegistered'), 'success');
+  } catch (e) {
+    setAuthStatus(authText('authErrCrypto'), 'error');
+  }
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+
+  const login    = document.getElementById('authLoginInput')?.value.trim() ?? '';
+  const password = document.getElementById('authLoginPassword')?.value ?? '';
+  const accounts = getAccounts();
+  const account  = accounts.find(a => a.loginLower === login.toLowerCase());
+
+  if (!account) {
+    return setAuthStatus(authText('authErrNotFound'), 'error');
+  }
+
+  try {
+    const hash = await derivePasswordHash(password, base64ToBytes(account.salt));
+    if (hash !== account.hash) {
+      return setAuthStatus(authText('authErrWrongPassword'), 'error');
+    }
+
+    localStorage.setItem(SESSION_KEY, account.loginLower);
+    updateAuthUI();
+    document.getElementById('authLoginForm')?.reset();
+    setAuthStatus(`${authText('authWelcome')} ${account.name}`, 'success');
+    showToast(authText('authSuccessLogin'), 'success');
+    setTimeout(() => closeModal('auth'), 900);
+  } catch (e) {
+    setAuthStatus(authText('authErrCrypto'), 'error');
+  }
+}
+
+function logoutAccount() {
+  localStorage.removeItem(SESSION_KEY);
+  updateAuthUI();
+  showToast(authText('authSuccessLogout'), 'info');
+  setAuthStatus(authText('authSuccessLogout'), 'info');
 }
