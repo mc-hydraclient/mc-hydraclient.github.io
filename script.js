@@ -610,6 +610,8 @@ function usersApiUrl() {
 }
 
 const KEYS_KEY = 'hydraclient_keys_v1';
+const REMOTE_TTL_MS = 15000;
+let remoteCache = { at: 0, users: null, keys: null, inflight: null };
 
 function loadKeys() {
   try { return JSON.parse(localStorage.getItem(KEYS_KEY) || '{}'); }
@@ -619,52 +621,71 @@ function saveKeys(keys) {
   localStorage.setItem(KEYS_KEY, JSON.stringify(keys));
 }
 
-async function fetchRemoteData() {
-  const url = usersApiUrl();
-  if (!url) return { users: loadUsers(), keys: loadKeys() };
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) throw new Error('remote ' + res.status);
-  const data = await res.json();
+function normalizeRemoteData(data) {
   return {
     users: (data && data.users && typeof data.users === 'object') ? data.users : {},
     keys: (data && data.keys && typeof data.keys === 'object') ? data.keys : {}
   };
 }
 
+async function fetchRemoteData(force = false) {
+  const url = usersApiUrl();
+  if (!url) return { users: loadUsers(), keys: loadKeys() };
+  const now = Date.now();
+  if (!force && remoteCache.users && remoteCache.keys && (now - remoteCache.at) < REMOTE_TTL_MS) {
+    return { users: remoteCache.users, keys: remoteCache.keys };
+  }
+  if (!force && remoteCache.inflight) return remoteCache.inflight;
+  const req = (async () => {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('remote ' + res.status);
+    const data = normalizeRemoteData(await res.json());
+    remoteCache = { at: Date.now(), users: data.users, keys: data.keys, inflight: null };
+    return data;
+  })();
+  if (!force) remoteCache.inflight = req;
+  try { return await req; }
+  finally { if (remoteCache.inflight === req) remoteCache.inflight = null; }
+}
+
 async function pushRemoteData(users, keys) {
   const url = usersApiUrl();
   if (!url) return;
+  const payload = { users: users || {}, keys: keys || {} };
   await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ users, keys })
+    body: JSON.stringify(payload)
   });
+  remoteCache = { at: Date.now(), users: payload.users, keys: payload.keys, inflight: null };
 }
 
-async function syncUsersFromRemote() {
+function mergeUsers(local, remote) {
+  const merged = { ...local, ...remote };
+  for (const login of Object.keys({ ...local, ...remote })) {
+    const l = local[login];
+    const r = remote[login];
+    if (l && r) {
+      const lu = new Date(l.updated_at || l.last_login || l.created_at || 0).getTime();
+      const ru = new Date(r.updated_at || r.last_login || r.created_at || 0).getTime();
+      merged[login] = ru >= lu ? r : l;
+    } else {
+      merged[login] = r || l;
+    }
+  }
+  return merged;
+}
+
+async function syncUsersFromRemote(force = false) {
   const url = usersApiUrl();
   if (!url) return loadUsers();
   try {
-    const data = await fetchRemoteData();
-    const remote = data.users || {};
-    const remoteKeys = data.keys || {};
-    const local = loadUsers();
-    const merged = { ...local, ...remote };
-    for (const login of Object.keys({ ...local, ...remote })) {
-      const l = local[login];
-      const r = remote[login];
-      if (l && r) {
-        const lu = new Date(l.updated_at || l.last_login || l.created_at || 0).getTime();
-        const ru = new Date(r.updated_at || r.last_login || r.created_at || 0).getTime();
-        merged[login] = ru >= lu ? r : l;
-      } else {
-        merged[login] = r || l;
-      }
-    }
+    const data = await fetchRemoteData(force);
+    const merged = mergeUsers(loadUsers(), data.users || {});
+    const mergedKeys = { ...loadKeys(), ...(data.keys || {}) };
     saveUsers(merged);
-    // merge keys
-    const localKeys = loadKeys();
-    saveKeys({ ...localKeys, ...remoteKeys });
+    saveKeys(mergedKeys);
+    remoteCache = { at: Date.now(), users: merged, keys: mergedKeys, inflight: null };
     return merged;
   } catch (e) {
     console.warn('Remote users sync failed', e);
@@ -672,19 +693,21 @@ async function syncUsersFromRemote() {
   }
 }
 
-async function pushUsersToRemote(users) {
+async function pushUsersToRemote(users, keys = loadKeys()) {
   const url = usersApiUrl();
   if (!url) return;
   try {
-    const keys = loadKeys();
-    // try to preserve remote keys by fetching? cheaper to just push merged
-    let remoteKeys = {};
-    try { remoteKeys = (await fetchRemoteData()).keys || {}; } catch(e) {}
-    saveKeys({ ...remoteKeys, ...keys });
-    await pushRemoteData(users, { ...remoteKeys, ...keys });
+    await pushRemoteData(users, keys);
   } catch (e) {
     console.warn('Remote users push failed', e);
   }
+}
+
+function pushRemoteDataAsync(users, keys) {
+  return pushRemoteData(users, keys).catch(e => {
+    console.warn('Remote push failed', e);
+    showToast('Не удалось сохранить на сервере, повторите позже.', 'error');
+  });
 }
 
 function currentAccount() {
@@ -869,7 +892,7 @@ async function handleRegister(event) {
       subscription_until: null
     };
     saveUsers(users);
-    await pushUsersToRemote(users);
+    remoteCache = { at: Date.now(), users, keys: loadKeys(), inflight: null };
 
     document.getElementById('authRegisterForm')?.reset();
     const loginInput = document.getElementById('authLoginInput');
@@ -877,6 +900,7 @@ async function handleRegister(event) {
     setAuthTab('login');
     setAuthStatus(authText('authSuccessRegistered'), 'success');
     showToast(authText('authSuccessRegistered'), 'success');
+    pushRemoteDataAsync(users, loadKeys());
   } catch (err) {
     console.error(err);
     setAuthStatus(authText('authErrNetwork'), 'error');
@@ -907,10 +931,10 @@ async function handleLogin(event) {
     user.hwid = user.hwid || hwidForDevice();
     users[login] = user;
     saveUsers(users);
-    await pushUsersToRemote(users);
-
     saveSession(buildSession(user));
     updateAuthUI();
+    remoteCache = { at: Date.now(), users, keys: loadKeys(), inflight: null };
+
     document.getElementById('authLoginForm')?.reset();
     if (banned) {
       setAuthStatus(`Аккаунт заблокирован до: ${banText(user)}`, 'error');
@@ -921,6 +945,7 @@ async function handleLogin(event) {
       showToast(authText('authSuccessLogin'), 'success');
       setTimeout(() => closeModal('auth'), 900);
     }
+    pushRemoteDataAsync(users, loadKeys());
   } catch (err) {
     console.error(err);
     setAuthStatus(authText('authErrNetwork'), 'error');
@@ -1096,21 +1121,14 @@ async function handleActivateKey(event) {
     saveKeys(keys);
   }
   saveUsers(users);
-  // push users and keys
-  try {
-    const remote = await fetchRemoteData();
-    const mergedKeys = { ...(remote.keys||{}), ...keys };
-    saveKeys(mergedKeys);
-    await pushRemoteData(users, mergedKeys);
-  } catch(e) {
-    await pushUsersToRemote(users);
-  }
   saveSession(buildSession(user));
+  remoteCache = { at: Date.now(), users, keys, inflight: null };
 
   if (input) input.value = '';
   renderAccountPanel();
   setProfileStatus(`${authText('accountKeySuccess')} ${msgDays}`.trim(), 'success');
   showToast(authText('accountKeySuccess'), 'success');
+  pushRemoteDataAsync(users, keys);
 }
 
 async function handleChangePassword(event) {
@@ -1139,12 +1157,13 @@ async function handleChangePassword(event) {
     user.updated_at = new Date().toISOString();
     users[session.login] = user;
     saveUsers(users);
-    await pushUsersToRemote(users);
     saveSession(buildSession(user));
+    remoteCache = { at: Date.now(), users, keys: loadKeys(), inflight: null };
 
     document.getElementById('changePasswordForm')?.reset();
     setProfileStatus(authText('profileSuccessPassword'), 'success');
     showToast(authText('profileSuccessPassword'), 'success');
+    pushRemoteDataAsync(users, loadKeys());
   } catch (err) {
     console.error(err);
     setProfileStatus(authText('authErrNetwork'), 'error');
@@ -1162,6 +1181,7 @@ async function handleAdminBan(event) {
   if (!m) return setProfileStatus('Формат: логин 13d / 5h / 30m / perm', 'error');
   const targetLogin = m[1].toLowerCase();
   if (targetLogin === 'owner') return setProfileStatus('Нельзя забанить OWNER.', 'error');
+
   const users = await syncUsersFromRemote();
   const target = users[targetLogin];
   if (!target) return setProfileStatus('Аккаунт не найден.', 'error');
@@ -1179,10 +1199,12 @@ async function handleAdminBan(event) {
   target.updated_at = new Date().toISOString();
   users[targetLogin] = target;
   saveUsers(users);
-  await pushUsersToRemote(users);
+  remoteCache = { at: Date.now(), users, keys: loadKeys(), inflight: null };
+
   document.getElementById('adminBanInput').value = '';
   setProfileStatus(`Аккаунт ${targetLogin} заблокирован до: ${banText(target)}`, 'success');
   showToast('Игрок забанен', 'success');
+  pushRemoteDataAsync(users, loadKeys());
 }
 
 async function handleAdminUnban(event) {
@@ -1191,6 +1213,7 @@ async function handleAdminUnban(event) {
   if (!session || !isAdminUser(session)) return setProfileStatus('Нет доступа.', 'error');
   const targetLogin = (document.getElementById('adminUnbanInput')?.value || '').trim().toLowerCase();
   if (!targetLogin) return setProfileStatus('Введите логин.', 'error');
+
   const users = await syncUsersFromRemote();
   const target = users[targetLogin];
   if (!target) return setProfileStatus('Аккаунт не найден.', 'error');
@@ -1198,10 +1221,12 @@ async function handleAdminUnban(event) {
   target.updated_at = new Date().toISOString();
   users[targetLogin] = target;
   saveUsers(users);
-  await pushUsersToRemote(users);
+  remoteCache = { at: Date.now(), users, keys: loadKeys(), inflight: null };
+
   document.getElementById('adminUnbanInput').value = '';
   setProfileStatus(`Аккаунт ${targetLogin} разбанен.`, 'success');
   showToast('Игрок разбанен', 'success');
+  pushRemoteDataAsync(users, loadKeys());
 }
 
 async function handleAdminResetPassword(event) {
@@ -1212,6 +1237,7 @@ async function handleAdminResetPassword(event) {
   const newPassword = document.getElementById('adminResetPassword')?.value || '';
   if (!targetLogin) return setProfileStatus('Введите логин.', 'error');
   if (newPassword.length < 6) return setProfileStatus('Пароль: минимум 6 символов.', 'error');
+
   const users = await syncUsersFromRemote();
   const target = users[targetLogin];
   if (!target) return setProfileStatus('Аккаунт не найден.', 'error');
@@ -1222,11 +1248,13 @@ async function handleAdminResetPassword(event) {
     target.updated_at = new Date().toISOString();
     users[targetLogin] = target;
     saveUsers(users);
-    await pushUsersToRemote(users);
+    remoteCache = { at: Date.now(), users, keys: loadKeys(), inflight: null };
+
     document.getElementById('adminResetLogin').value = '';
     document.getElementById('adminResetPassword').value = '';
     setProfileStatus(`Пароль для ${targetLogin} сброшен.`, 'success');
     showToast('Пароль сброшен', 'success');
+    pushRemoteDataAsync(users, loadKeys());
   } catch (e) {
     console.error(e);
     setProfileStatus('Ошибка сброса пароля.', 'error');
@@ -1253,9 +1281,7 @@ async function handleAdminCreateKey(event) {
   if (CONFIG.activationKeys?.[key]) return setProfileStatus('Такой ключ уже существует.', 'error');
 
   const users = await syncUsersFromRemote();
-  let remote;
-  try { remote = await fetchRemoteData(); } catch(e) { remote = {users, keys: loadKeys()}; }
-  const keys = { ...(remote.keys||{}), ...loadKeys() };
+  const keys = loadKeys();
   if (keys[key]) return setProfileStatus('Такой ключ уже существует.', 'error');
 
   let duration;
@@ -1264,15 +1290,15 @@ async function handleAdminCreateKey(event) {
   else if (parsed.unit === 'h') { duration = Math.max(1, parsed.duration) / 24; label = `${parsed.duration} ч.`; }
   else if (parsed.unit === 'm') { duration = Math.max(1, parsed.duration) / 1440; label = `${parsed.duration} мин.`; }
   else { duration = Math.max(1, parsed.duration); label = `${parsed.duration} дн.`; }
-
-  // normalize duration to days number for consistency with existing logic, except lifetime
   if (duration !== 'lifetime') duration = Number(duration);
 
   keys[key] = { duration, label, created_by: session.login, created_at: new Date().toISOString(), used_by: null, used_at: null };
   saveKeys(keys);
   saveUsers(users);
-  try { await pushRemoteData(users, keys); } catch(e) { console.warn(e); }
+  remoteCache = { at: Date.now(), users, keys, inflight: null };
+
   document.getElementById('adminKeyInput').value = '';
   setProfileStatus(`Ключ создан: ${key} (${label})`, 'success');
   showToast('Ключ создан', 'success');
+  pushRemoteDataAsync(users, keys);
 }
