@@ -900,10 +900,7 @@ async function handleLogin(event) {
     const ok = await verifyPassword(password, user.salt, user.passwordHash);
     if (!ok) return setAuthStatus(authText('authErrWrongPassword'), 'error');
 
-    if (isBanned(user)) {
-      return setAuthStatus(`Аккаунт заблокирован до: ${banText(user)}`, 'error');
-    }
-
+    const banned = isBanned(user);
     if (isAdminUser(user)) user.subscription_until = 'lifetime';
     user.last_login = new Date().toISOString();
     user.updated_at = user.last_login;
@@ -915,9 +912,15 @@ async function handleLogin(event) {
     saveSession(buildSession(user));
     updateAuthUI();
     document.getElementById('authLoginForm')?.reset();
-    setAuthStatus(`${authText('authWelcome')} ${user.name}`, 'success');
-    showToast(authText('authSuccessLogin'), 'success');
-    setTimeout(() => closeModal('auth'), 900);
+    if (banned) {
+      setAuthStatus(`Аккаунт заблокирован до: ${banText(user)}`, 'error');
+      showToast(`Аккаунт заблокирован до: ${banText(user)}`, 'error');
+      setTimeout(() => { closeModal('auth'); openProfile(); }, 700);
+    } else {
+      setAuthStatus(`${authText('authWelcome')} ${user.name}`, 'success');
+      showToast(authText('authSuccessLogin'), 'success');
+      setTimeout(() => closeModal('auth'), 900);
+    }
   } catch (err) {
     console.error(err);
     setAuthStatus(authText('authErrNetwork'), 'error');
@@ -1044,6 +1047,12 @@ function renderAccountPanel() {
   if (badge) badge.textContent = isAdminUser(s) ? 'Админ' : group;
   const adminPanel = document.getElementById('adminPanel');
   if (adminPanel) adminPanel.hidden = !isAdminUser(s);
+  const banNotice = document.getElementById('profileBanNotice');
+  if (banNotice) {
+    const banned = isBanned(s);
+    banNotice.hidden = !banned;
+    banNotice.textContent = banned ? `Аккаунт заблокирован до: ${banText(s)}. Доступ в лаунчере и запуск игры ограничены.` : '';
+  }
 }
 
 async function handleActivateKey(event) {
