@@ -866,7 +866,7 @@ async function handleRegister(event) {
       last_login: null,
       updated_at: nowIso,
       hwid: hwidForDevice(),
-      subscription_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      subscription_until: null
     };
     saveUsers(users);
     await pushUsersToRemote(users);
