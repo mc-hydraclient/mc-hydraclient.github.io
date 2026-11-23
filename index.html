@@ -680,6 +680,14 @@
             <button type="submit" class="btn btn-outline">Разбанить</button>
           </div>
         </form>
+        <form class="account-key-form" onsubmit="handleAdminResetPassword(event)" autocomplete="off" style="margin-top:10px;">
+          <label for="adminResetLogin">Сброс пароля</label>
+          <div class="account-key-row">
+            <input type="text" id="adminResetLogin" maxlength="64" placeholder="Логин" />
+            <input type="text" id="adminResetPassword" maxlength="128" placeholder="Новый пароль" />
+            <button type="submit" class="btn btn-outline">Сбросить</button>
+          </div>
+        </form>
       </div>
 
       <div class="profile-divider"></div>

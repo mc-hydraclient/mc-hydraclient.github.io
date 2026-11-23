@@ -1195,6 +1195,35 @@ async function handleAdminUnban(event) {
   showToast('Игрок разбанен', 'success');
 }
 
+async function handleAdminResetPassword(event) {
+  event.preventDefault();
+  const session = getSession();
+  if (!session || !isAdminUser(session)) return setProfileStatus('Нет доступа.', 'error');
+  const targetLogin = (document.getElementById('adminResetLogin')?.value || '').trim().toLowerCase();
+  const newPassword = document.getElementById('adminResetPassword')?.value || '';
+  if (!targetLogin) return setProfileStatus('Введите логин.', 'error');
+  if (newPassword.length < 6) return setProfileStatus('Пароль: минимум 6 символов.', 'error');
+  const users = await syncUsersFromRemote();
+  const target = users[targetLogin];
+  if (!target) return setProfileStatus('Аккаунт не найден.', 'error');
+  try {
+    const { hash, salt } = await hashPassword(newPassword);
+    target.passwordHash = hash;
+    target.salt = salt;
+    target.updated_at = new Date().toISOString();
+    users[targetLogin] = target;
+    saveUsers(users);
+    await pushUsersToRemote(users);
+    document.getElementById('adminResetLogin').value = '';
+    document.getElementById('adminResetPassword').value = '';
+    setProfileStatus(`Пароль для ${targetLogin} сброшен.`, 'success');
+    showToast('Пароль сброшен', 'success');
+  } catch (e) {
+    console.error(e);
+    setProfileStatus('Ошибка сброса пароля.', 'error');
+  }
+}
+
 
 function parseKeyDuration(key) {
   const m = String(key).trim().match(/(?:^|[^a-z0-9])(\d+)(d|h|m)$/i);
