@@ -605,6 +605,54 @@ function saveUsers(users) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
+function usersApiUrl() {
+  return (CONFIG.auth?.usersApi || '').replace(/\/$/, '');
+}
+
+async function syncUsersFromRemote() {
+  const url = usersApiUrl();
+  if (!url) return loadUsers();
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('remote ' + res.status);
+    const data = await res.json();
+    const remote = (data && typeof data === 'object' && data.users && typeof data.users === 'object') ? data.users : {};
+    const local = loadUsers();
+    const merged = { ...local, ...remote };
+    // merge per-user by updated_at
+    for (const login of Object.keys({ ...local, ...remote })) {
+      const l = local[login];
+      const r = remote[login];
+      if (l && r) {
+        const lu = new Date(l.updated_at || l.last_login || l.created_at || 0).getTime();
+        const ru = new Date(r.updated_at || r.last_login || r.created_at || 0).getTime();
+        merged[login] = ru >= lu ? r : l;
+      } else {
+        merged[login] = r || l;
+      }
+    }
+    saveUsers(merged);
+    return merged;
+  } catch (e) {
+    console.warn('Remote users sync failed', e);
+    return loadUsers();
+  }
+}
+
+async function pushUsersToRemote(users) {
+  const url = usersApiUrl();
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ users })
+    });
+  } catch (e) {
+    console.warn('Remote users push failed', e);
+  }
+}
+
 function currentAccount() {
   const session = getSession();
   if (!session?.login) return null;
@@ -745,7 +793,7 @@ async function handleRegister(event) {
   if (invalid) return setAuthStatus(authText(invalid), 'error');
 
   const login = data.login.toLowerCase();
-  const users = loadUsers();
+  const users = await syncUsersFromRemote();
   if (users[login]) return setAuthStatus(authText('authErrLoginTaken'), 'error');
 
   try {
@@ -759,10 +807,12 @@ async function handleRegister(event) {
       uid: uidForLogin(login),
       created_at: nowIso,
       last_login: null,
+      updated_at: nowIso,
       hwid: hwidForDevice(),
       subscription_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     };
     saveUsers(users);
+    await pushUsersToRemote(users);
 
     document.getElementById('authRegisterForm')?.reset();
     const loginInput = document.getElementById('authLoginInput');
@@ -785,7 +835,7 @@ async function handleLogin(event) {
 
   if (!login || !password) return setAuthStatus(authText('authErrNotFound'), 'error');
 
-  const users = loadUsers();
+  const users = await syncUsersFromRemote();
   const user = users[login];
   if (!user) return setAuthStatus(authText('authErrNotFound'), 'error');
 
@@ -794,9 +844,11 @@ async function handleLogin(event) {
     if (!ok) return setAuthStatus(authText('authErrWrongPassword'), 'error');
 
     user.last_login = new Date().toISOString();
+    user.updated_at = user.last_login;
     user.hwid = user.hwid || hwidForDevice();
     users[login] = user;
     saveUsers(users);
+    await pushUsersToRemote(users);
 
     saveSession(buildSession(user));
     updateAuthUI();
@@ -931,15 +983,17 @@ async function handleActivateKey(event) {
   const days = CONFIG.activationKeys?.[key];
   if (!days) return setProfileStatus(authText('accountKeyError'), 'error');
 
-  const users = loadUsers();
+  const users = await syncUsersFromRemote();
   const user = users[session.login];
   if (!user) return setProfileStatus(authText('authErrNotFound'), 'error');
 
   const base = Math.max(Date.now(), new Date(user.subscription_until || 0).getTime());
   user.subscription_until = new Date(base + days * 24 * 60 * 60 * 1000).toISOString();
   user.activated_key = key;
+  user.updated_at = new Date().toISOString();
   users[session.login] = user;
   saveUsers(users);
+  await pushUsersToRemote(users);
   saveSession(buildSession(user));
 
   if (input) input.value = '';
@@ -960,7 +1014,7 @@ async function handleChangePassword(event) {
   if (newPassword.length < 8) return setProfileStatus(authText('authErrPassword'), 'error');
   if (newPassword !== confirm) return setProfileStatus(authText('authErrPasswordMismatch'), 'error');
 
-  const users = loadUsers();
+  const users = await syncUsersFromRemote();
   const user = users[session.login];
   if (!user) return setProfileStatus(authText('authErrNotFound'), 'error');
 
@@ -971,8 +1025,10 @@ async function handleChangePassword(event) {
     const { hash, salt } = await hashPassword(newPassword);
     user.passwordHash = hash;
     user.salt = salt;
+    user.updated_at = new Date().toISOString();
     users[session.login] = user;
     saveUsers(users);
+    await pushUsersToRemote(users);
     saveSession(buildSession(user));
 
     document.getElementById('changePasswordForm')?.reset();
