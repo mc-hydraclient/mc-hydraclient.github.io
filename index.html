@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HydraClient вЂ” Minecraft 2026</title>
-  <meta name="description" content="HydraClient вЂ” РїСЂРѕС„РµСЃСЃРёРѕРЅР°Р»СЊРЅС‹Р№ Minecraft РєР»РёРµРЅС‚ РЅРѕРІРѕРіРѕ РїРѕРєРѕР»РµРЅРёСЏ. РљСЂР°СЃРёРІС‹Р№ РёРЅС‚РµСЂС„РµР№СЃ, РѕРїС‚РёРјРёР·Р°С†РёСЏ, РѕР±С…РѕРґ Р°РЅС‚РёС‡РёС‚Р°." />
+  <title>HydraClient — Minecraft 2026</title>
+  <meta name="description" content="HydraClient — профессиональный Minecraft клиент нового поколения. Красивый интерфейс, оптимизация, обход античита." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -16,33 +16,33 @@
 <div class="bg-grid"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+<!-- ════════════════════════════════════════
      NAVBAR
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+════════════════════════════════════════ -->
 <nav class="navbar" id="navbar">
 
-  <!-- Р›РѕРіРѕС‚РёРї -->
+  <!-- Логотип -->
   <span class="nav-logo" onclick="scrollTo({top:0,behavior:'smooth'})">
     <span class="logo-dot"></span>
     HydraClient
   </span>
 
-  <!-- Р¦РµРЅС‚СЂР°Р»СЊРЅС‹Рµ СЃСЃС‹Р»РєРё -->
+  <!-- Центральные ссылки -->
   <ul class="nav-center" id="navCenter">
-    <li><a href="#hero"        data-i18n="nav0">Р“Р»Р°РІРЅР°СЏ</a></li>
-    <li><a href="#features"    data-i18n="nav1">Р¤СѓРЅРєС†РёРё</a></li>
-    <li><a href="#video"       data-i18n="nav2">Р’РёРґРµРѕРѕР±Р·РѕСЂ</a></li>
-    <li><a href="#pricing"     data-i18n="nav3">РљСѓРїРёС‚СЊ</a></li>
-    <li><a href="#support"     data-i18n="nav4">РџРѕРґРґРµСЂР¶РєР°</a></li>
+    <li><a href="#hero"        data-i18n="nav0">Главная</a></li>
+    <li><a href="#features"    data-i18n="nav1">Функции</a></li>
+    <li><a href="#video"       data-i18n="nav2">Видеообзор</a></li>
+    <li><a href="#pricing"     data-i18n="nav3">Купить</a></li>
+    <li><a href="#support"     data-i18n="nav4">Поддержка</a></li>
   </ul>
 
-  <!-- РџСЂР°РІР°СЏ С‡Р°СЃС‚СЊ: СЏР·С‹Рє + РєРЅРѕРїРєР° РєСѓРїРёС‚СЊ + РіР°РјР±СѓСЂРіРµСЂ -->
+  <!-- Правая часть: язык + кнопка купить + гамбургер -->
   <div class="nav-right">
 
-    <!-- Р’С‹Р±РѕСЂ СЏР·С‹РєР° -->
+    <!-- Выбор языка -->
     <div class="lang-selector" id="langSelector">
       <button class="lang-btn" id="langBtn" onclick="toggleLangDropdown()">
-        <span id="langFlag">рџ‡·рџ‡є</span>
+        <span id="langFlag">🇷🇺</span>
         <span id="langLabel">RU</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="6,9 12,15 18,9"></polyline>
@@ -51,39 +51,39 @@
       <div class="lang-dropdown" id="langDropdown"></div>
     </div>
 
-    <button class="nav-login" id="navLogin" onclick="handleNavLogin()" data-i18n="navLogin">Р’РѕР№С‚Рё</button>
-    <button class="nav-register" id="navRegister" onclick="handleNavRegister()" data-i18n="navRegister">Р РµРіРёСЃС‚СЂР°С†РёСЏ</button>
+    <button class="nav-login" id="navLogin" onclick="handleNavLogin()" data-i18n="navLogin">Войти</button>
+    <button class="nav-register" id="navRegister" onclick="handleNavRegister()" data-i18n="navRegister">Регистрация</button>
 
-    <a href="#pricing" class="nav-buy" data-i18n="navBuy">РљСѓРїРёС‚СЊ</a>
+    <a href="#pricing" class="nav-buy" data-i18n="navBuy">Купить</a>
 
-    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="РњРµРЅСЋ">
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Меню">
       <span></span><span></span><span></span>
     </button>
 
   </div>
 </nav>
 
-<!-- РњРѕР±РёР»СЊРЅРѕРµ РјРµРЅСЋ -->
+<!-- Мобильное меню -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#hero"     onclick="closeMobileMenu()" data-mob-i18n="nav0">Р“Р»Р°РІРЅР°СЏ</a>
-  <a href="#features" onclick="closeMobileMenu()" data-mob-i18n="nav1">Р¤СѓРЅРєС†РёРё</a>
-  <a href="#video"    onclick="closeMobileMenu()" data-mob-i18n="nav2">Р’РёРґРµРѕРѕР±Р·РѕСЂ</a>
-  <a href="#pricing"  onclick="closeMobileMenu()" data-mob-i18n="nav3">РљСѓРїРёС‚СЊ</a>
-  <a href="#support"  onclick="closeMobileMenu()" data-mob-i18n="nav4">РџРѕРґРґРµСЂР¶РєР°</a>
-  <button class="mobile-auth" onclick="closeMobileMenu(); openProfile()" data-mob-i18n="profileTitle">РџСЂРѕС„РёР»СЊ</button>
-  <button class="mobile-auth" id="mobRegister" onclick="closeMobileMenu(); handleNavRegister()" data-mob-i18n="navRegister">Р РµРіРёСЃС‚СЂР°С†РёСЏ</button>
-  <button class="mobile-auth" id="mobLogin" onclick="closeMobileMenu(); handleNavLogin()" data-mob-i18n="navLogin">Р’РѕР№С‚Рё</button>
-  <a href="HydraClient-Launcher.exe" class="mobile-auth" download data-mob-i18n="downloadLauncher">РЎРєР°С‡Р°С‚СЊ Р›Р°СѓРЅС‡РµСЂ</a>
+  <a href="#hero"     onclick="closeMobileMenu()" data-mob-i18n="nav0">Главная</a>
+  <a href="#features" onclick="closeMobileMenu()" data-mob-i18n="nav1">Функции</a>
+  <a href="#video"    onclick="closeMobileMenu()" data-mob-i18n="nav2">Видеообзор</a>
+  <a href="#pricing"  onclick="closeMobileMenu()" data-mob-i18n="nav3">Купить</a>
+  <a href="#support"  onclick="closeMobileMenu()" data-mob-i18n="nav4">Поддержка</a>
+  <button class="mobile-auth" onclick="closeMobileMenu(); openProfile()" data-mob-i18n="profileTitle">Профиль</button>
+  <button class="mobile-auth" id="mobRegister" onclick="closeMobileMenu(); handleNavRegister()" data-mob-i18n="navRegister">Регистрация</button>
+  <button class="mobile-auth" id="mobLogin" onclick="closeMobileMenu(); handleNavLogin()" data-mob-i18n="navLogin">Войти</button>
+  <a href="HydraClient-Launcher.exe" class="mobile-auth" download data-mob-i18n="downloadLauncher">Скачать Лаунчер</a>
 </div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+<!-- ════════════════════════════════════════
      HERO
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+════════════════════════════════════════ -->
 <section id="hero" style="padding:0;">
   <div class="hero">
     <div class="hero-inner">
 
-      <!-- Р›РµРІР°СЏ С‡Р°СЃС‚СЊ: С‚РµРєСЃС‚ -->
+      <!-- Левая часть: текст -->
       <div class="hero-left">
 
         <div class="hero-eyebrow anim-up">
@@ -97,11 +97,11 @@
         </h1>
 
         <p class="hero-tagline anim-up-2" id="heroTagline">
-          РџСЂРµРІРѕСЃС…РѕРґСЃС‚РІРѕ. РЎРєРѕСЂРѕСЃС‚СЊ. РџРѕР±РµРґР°.
+          Превосходство. Скорость. Победа.
         </p>
 
         <p class="hero-desc anim-up-3" id="heroQuote">
-          РњС‹ РЅРµ РїСЂРѕСЃС‚Рѕ РєР»РёРµРЅС‚ вЂ” РјС‹ СЃС‚РёР»СЊ РёРіСЂС‹.
+          Мы не просто клиент — мы стиль игры.
         </p>
 
         <div class="hero-actions anim-up-4">
@@ -111,19 +111,19 @@
               <line x1="3" y1="6" x2="21" y2="6"/>
               <path d="M16 10a4 4 0 01-8 0"/>
             </svg>
-            РљСѓРїРёС‚СЊ СЃРµР№С‡Р°СЃ
+            Купить сейчас
           </a>
           <a href="#features" class="btn btn-outline" id="heroBtnLearn">
-            РЈР·РЅР°С‚СЊ Р±РѕР»СЊС€Рµ
+            Узнать больше
           </a>
           <a href="HydraClient-Launcher.exe" class="btn btn-outline" id="heroBtnDownload" download data-i18n="downloadLauncher">
-            РЎРєР°С‡Р°С‚СЊ Р›Р°СѓРЅС‡РµСЂ
+            Скачать Лаунчер
           </a>
         </div>
 
       </div>
 
-      <!-- РџСЂР°РІР°СЏ С‡Р°СЃС‚СЊ: РІРёРґРµРѕ -->
+      <!-- Правая часть: видео -->
       <div class="hero-right anim-right">
         <div class="hero-video-frame" id="heroVideoFrame">
           <div class="hero-video-placeholder" id="heroVideoPlaceholder">
@@ -132,16 +132,16 @@
                 <path d="M8 5v14l11-7z"/>
               </svg>
             </div>
-            <p id="heroVideoHint">Р’РёРґРµРѕ СЃРєРѕСЂРѕ РїРѕСЏРІРёС‚СЃСЏ</p>
+            <p id="heroVideoHint">Видео скоро появится</p>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- РџРѕРґСЃРєР°Р·РєР° РїСЂРѕРєСЂСѓС‚РєРё -->
+    <!-- Подсказка прокрутки -->
     <div class="scroll-hint">
-      <span data-i18n="scrollDown">РџСЂРѕРєСЂСѓС‚РёС‚Рµ РІРЅРёР·</span>
+      <span data-i18n="scrollDown">Прокрутите вниз</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="6,9 12,15 18,9"></polyline>
       </svg>
@@ -151,22 +151,22 @@
 
 <div class="divider"></div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+<!-- ════════════════════════════════════════
      FEATURES
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+════════════════════════════════════════ -->
 <section id="features">
   <div class="container">
 
     <div class="section-header reveal">
-      <div class="section-eyebrow">РџСЂРµРёРјСѓС‰РµСЃС‚РІР°</div>
-      <h2 class="section-title" data-i18n="sectionFeatures">РќР°С€Рё РїСЂРµРёРјСѓС‰РµСЃС‚РІР°</h2>
+      <div class="section-eyebrow">Преимущества</div>
+      <h2 class="section-title" data-i18n="sectionFeatures">Наши преимущества</h2>
       <p class="section-subtitle" data-i18n="featuresSubtitle">
-        Р’СЃС‘, С‡С‚Рѕ РІС‹ РіР°СЂР°РЅС‚РёСЂРѕРІР°РЅРЅРѕ РїРѕР»СѓС‡РёС‚Рµ РїРѕСЃР»Рµ РїРѕРєСѓРїРєРё РЅР°С€РµРіРѕ РєР»РёРµРЅС‚Р°.
+        Всё, что вы гарантированно получите после покупки нашего клиента.
       </p>
     </div>
 
     <div class="features-grid" id="featuresGrid">
-      <!-- Р“РµРЅРµСЂРёСЂСѓРµС‚СЃСЏ РІ script.js в†’ buildFeatures() -->
+      <!-- Генерируется в script.js → buildFeatures() -->
     </div>
 
   </div>
@@ -174,21 +174,21 @@
 
 <div class="divider"></div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-     Р’РР”Р•РћРћР‘Р—РћР 
-     РЎР»РµРІР° вЂ” Р·Р°РіРѕР»РѕРІРѕРє Рё РѕРїРёСЃР°РЅРёРµ
-     РЎРїСЂР°РІР° вЂ” РїР»РµРµСЂ
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+<!-- ════════════════════════════════════════
+     ВИДЕООБЗОР
+     Слева — заголовок и описание
+     Справа — плеер
+════════════════════════════════════════ -->
 <section id="video">
   <div class="container">
     <div class="video-section-container">
 
-      <!-- Р›РµРІР°СЏ С‡Р°СЃС‚СЊ: РѕРїРёСЃР°РЅРёРµ -->
+      <!-- Левая часть: описание -->
       <div class="reveal">
-        <div class="section-eyebrow">Р’РёРґРµРѕРѕР±Р·РѕСЂ</div>
-        <h2 class="section-title" data-i18n="sectionVideo">Р’РёРґРµРѕРѕР±Р·РѕСЂ</h2>
+        <div class="section-eyebrow">Видеообзор</div>
+        <h2 class="section-title" data-i18n="sectionVideo">Видеообзор</h2>
         <p class="section-subtitle" data-i18n="videoSubtitle">
-          РџРѕСЃРјРѕС‚СЂРёС‚Рµ РЅР° СЂРµР°Р»СЊРЅС‹Р№ РіРµР№РјРїР»РµР№ СЃ РЅР°С€РёРј РєР»РёРµРЅС‚РѕРј.
+          Посмотрите на реальный геймплей с нашим клиентом.
         </p>
 
         <div class="video-bullets">
@@ -198,7 +198,7 @@
                 <polyline points="20,6 9,17 4,12"/>
               </svg>
             </div>
-            <span class="video-bullet-text" data-i18n="videoBullet1">Р РµР°Р»СЊРЅС‹Р№ РіРµР№РјРїР»РµР№ Р±РµР· РјРѕРЅС‚Р°Р¶Р°</span>
+            <span class="video-bullet-text" data-i18n="videoBullet1">Реальный геймплей без монтажа</span>
           </div>
           <div class="video-bullet">
             <div class="video-bullet-icon">
@@ -206,7 +206,7 @@
                 <polyline points="20,6 9,17 4,12"/>
               </svg>
             </div>
-            <span class="video-bullet-text" data-i18n="videoBullet2">Р”РµРјРѕРЅСЃС‚СЂР°С†РёСЏ РІСЃРµС… РєР»СЋС‡РµРІС‹С… С„СѓРЅРєС†РёР№</span>
+            <span class="video-bullet-text" data-i18n="videoBullet2">Демонстрация всех ключевых функций</span>
           </div>
           <div class="video-bullet">
             <div class="video-bullet-icon">
@@ -214,12 +214,12 @@
                 <polyline points="20,6 9,17 4,12"/>
               </svg>
             </div>
-            <span class="video-bullet-text" data-i18n="videoBullet3">РќР°СЃС‚СЂРѕР№РєРё РёРЅС‚РµСЂС„РµР№СЃР° РІ РґРµС‚Р°Р»СЏС…</span>
+            <span class="video-bullet-text" data-i18n="videoBullet3">Настройки интерфейса в деталях</span>
           </div>
         </div>
       </div>
 
-      <!-- РџСЂР°РІР°СЏ С‡Р°СЃС‚СЊ: РїР»РµРµСЂ -->
+      <!-- Правая часть: плеер -->
       <div class="reveal reveal-d2">
         <div class="video-embed-wrap" id="videoContainer">
           <div class="video-embed-placeholder">
@@ -228,7 +228,7 @@
                 <path d="M8 5v14l11-7z"/>
               </svg>
             </div>
-            <p id="videoPlaceholderText">Р’РёРґРµРѕ СЃРєРѕСЂРѕ РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ</p>
+            <p id="videoPlaceholderText">Видео скоро появится здесь</p>
           </div>
         </div>
       </div>
@@ -239,22 +239,22 @@
 
 <div class="divider"></div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-     РЎРљР РРќРЁРћРўР«
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+<!-- ════════════════════════════════════════
+     СКРИНШОТЫ
+════════════════════════════════════════ -->
 <section id="screenshots">
   <div class="container">
 
     <div class="section-header reveal">
-      <div class="section-eyebrow">Р“Р°Р»РµСЂРµСЏ</div>
-      <h2 class="section-title" data-i18n="sectionScreenshots">РЎРєСЂРёРЅС€РѕС‚С‹</h2>
+      <div class="section-eyebrow">Галерея</div>
+      <h2 class="section-title" data-i18n="sectionScreenshots">Скриншоты</h2>
       <p class="section-subtitle" data-i18n="screenshotsSubtitle">
-        РќРµСЃРєРѕР»СЊРєРѕ СЃРЅРёРјРєРѕРІ РїСЂСЏРјРѕ РёР· РёРіСЂС‹ СЃ РЅР°С€РёРј РєР»РёРµРЅС‚РѕРј.
+        Несколько снимков прямо из игры с нашим клиентом.
       </p>
     </div>
 
     <div class="screenshots-grid" id="screenshotsGrid">
-      <!-- Р“РµРЅРµСЂРёСЂСѓРµС‚СЃСЏ РІ script.js в†’ buildScreenshots() -->
+      <!-- Генерируется в script.js → buildScreenshots() -->
     </div>
 
   </div>
@@ -262,22 +262,22 @@
 
 <div class="divider"></div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-     РўРђР РР¤Р«
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+<!-- ════════════════════════════════════════
+     ТАРИФЫ
+════════════════════════════════════════ -->
 <section id="pricing">
   <div class="container">
 
     <div class="section-header reveal">
-      <div class="section-eyebrow">РўР°СЂРёС„С‹</div>
-      <h2 class="section-title" data-i18n="sectionPricing">РўР°СЂРёС„С‹</h2>
+      <div class="section-eyebrow">Тарифы</div>
+      <h2 class="section-title" data-i18n="sectionPricing">Тарифы</h2>
       <p class="section-subtitle" data-i18n="pricingSubtitle">
-        Р’С‹Р±РµСЂРёС‚Рµ РїРѕРґС…РѕРґСЏС‰РёР№ РїР»Р°РЅ. Р’СЃРµ РїР»Р°РЅС‹ РІРєР»СЋС‡Р°СЋС‚ РїРѕР»РЅС‹Р№ РґРѕСЃС‚СѓРї Рє С„СѓРЅРєС†РёРѕРЅР°Р»Сѓ.
+        Выберите подходящий план. Все планы включают полный доступ к функционалу.
       </p>
     </div>
 
     <div class="pricing-grid" id="pricingGrid">
-      <!-- Р“РµРЅРµСЂРёСЂСѓРµС‚СЃСЏ РІ script.js в†’ buildPricing() -->
+      <!-- Генерируется в script.js → buildPricing() -->
     </div>
 
   </div>
@@ -285,17 +285,17 @@
 
 <div class="divider"></div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-     РџРћР”Р”Р•Р Р–РљРђ
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+<!-- ════════════════════════════════════════
+     ПОДДЕРЖКА
+════════════════════════════════════════ -->
 <section id="support">
   <div class="container">
 
     <div class="section-header reveal" style="text-align:center;">
-      <div class="section-eyebrow" style="justify-content:center;">РљРѕРЅС‚Р°РєС‚С‹</div>
-      <h2 class="section-title" data-i18n="sectionSupport">РџРѕРґРґРµСЂР¶РєР°</h2>
+      <div class="section-eyebrow" style="justify-content:center;">Контакты</div>
+      <h2 class="section-title" data-i18n="sectionSupport">Поддержка</h2>
       <p class="section-subtitle" data-i18n="supportSubtitle" style="margin:0 auto;">
-        Р•СЃС‚СЊ РІРѕРїСЂРѕСЃС‹? РњС‹ РІСЃРµРіРґР° СЂР°РґС‹ РїРѕРјРѕС‡СЊ.
+        Есть вопросы? Мы всегда рады помочь.
       </p>
     </div>
 
@@ -309,7 +309,7 @@
             <path d="M2 7l10 7 10-7"/>
           </svg>
         </div>
-        <div class="support-label" data-i18n="supportEmail">РџРѕС‡С‚Р° РґР»СЏ СЃРІСЏР·Рё</div>
+        <div class="support-label" data-i18n="supportEmail">Почта для связи</div>
         <div class="support-value" id="supportEmailVal"></div>
         <div class="support-hours" id="supportHoursVal"></div>
       </a>
@@ -317,7 +317,7 @@
       <!-- Discord -->
       <a class="support-card reveal reveal-d2" id="supportDiscordCard" href="#" target="_blank" rel="noopener">
         <div class="support-icon">
-          <!-- Discord icon (РјРѕРЅРѕС…СЂРѕРјРЅС‹Р№ SVG) -->
+          <!-- Discord icon (монохромный SVG) -->
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--primary-light);">
             <path d="M9 11.5a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z"/>
             <path d="M19.27 5.33A17.75 17.75 0 0014.94 4c-.18.33-.38.77-.52 1.12a16.36 16.36 0 00-4.84 0A11.2 11.2 0 009.06 4 17.8 17.8 0 004.73 5.33C2.02 9.46 1.27 13.48 1.65 17.45A17.87 17.87 0 007.1 20c.42-.57.79-1.17 1.11-1.81a11.6 11.6 0 01-1.74-.84l.42-.33a12.73 12.73 0 0010.22 0l.43.33c-.55.33-1.14.61-1.75.84.32.64.69 1.24 1.11 1.81a17.83 17.83 0 005.45-2.55c.44-4.53-.75-8.52-3.08-12.17z"/>
@@ -330,7 +330,7 @@
       <!-- Telegram -->
       <a class="support-card reveal reveal-d3" id="supportTelegramCard" href="#" target="_blank" rel="noopener">
         <div class="support-icon">
-          <!-- Telegram icon (РјРѕРЅРѕС…СЂРѕРјРЅС‹Р№ SVG) -->
+          <!-- Telegram icon (монохромный SVG) -->
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--primary-light);">
             <path d="M21.5 3.5L2.5 10.5l6.5 2 2 6.5 3-4 5.5 4z"/>
             <path d="M9 12.5l9-9"/>
@@ -346,40 +346,40 @@
 
 <div class="divider"></div>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+<!-- ════════════════════════════════════════
      FOOTER
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+════════════════════════════════════════ -->
 <footer class="footer">
   <div class="footer-inner">
 
-    <!-- Р‘СЂРµРЅРґРёРЅРі -->
+    <!-- Брендинг -->
     <div class="footer-brand">
       <div class="footer-brand-name">
         <span class="logo-dot"></span>
         HydraClient
       </div>
-      <p class="footer-tagline" id="footerTagline">РџСЂРµРІРѕСЃС…РѕРґСЃС‚РІРѕ. РЎРєРѕСЂРѕСЃС‚СЊ. РџРѕР±РµРґР°.</p>
+      <p class="footer-tagline" id="footerTagline">Превосходство. Скорость. Победа.</p>
     </div>
 
-    <!-- РќР°РІРёРіР°С†РёСЏ -->
+    <!-- Навигация -->
     <div class="footer-col">
-      <h4 data-i18n="footerNav">РќР°РІРёРіР°С†РёСЏ</h4>
+      <h4 data-i18n="footerNav">Навигация</h4>
       <ul>
-        <li><a href="#hero"     data-i18n="nav0">Р“Р»Р°РІРЅР°СЏ</a></li>
-        <li><a href="#features" data-i18n="nav1">Р¤СѓРЅРєС†РёРё</a></li>
-        <li><a href="#video"    data-i18n="nav2">Р’РёРґРµРѕРѕР±Р·РѕСЂ</a></li>
-        <li><a href="#pricing"  data-i18n="nav3">РљСѓРїРёС‚СЊ</a></li>
-        <li><a href="#support"  data-i18n="nav4">РџРѕРґРґРµСЂР¶РєР°</a></li>
+        <li><a href="#hero"     data-i18n="nav0">Главная</a></li>
+        <li><a href="#features" data-i18n="nav1">Функции</a></li>
+        <li><a href="#video"    data-i18n="nav2">Видеообзор</a></li>
+        <li><a href="#pricing"  data-i18n="nav3">Купить</a></li>
+        <li><a href="#support"  data-i18n="nav4">Поддержка</a></li>
       </ul>
     </div>
 
-    <!-- Р”РѕРєСѓРјРµРЅС‚С‹ -->
+    <!-- Документы -->
     <div class="footer-col">
-      <h4 data-i18n="footerLegal">Р”РѕРєСѓРјРµРЅС‚С‹</h4>
+      <h4 data-i18n="footerLegal">Документы</h4>
       <ul>
-        <li><a onclick="openModal('privacy')" data-i18n="footerPrivacy">РћР±СЂР°Р±РѕС‚РєР° РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С…</a></li>
-        <li><a onclick="openModal('terms')"   data-i18n="footerTerms">РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ</a></li>
-        <li><a onclick="openModal('rules')"   data-i18n="footerRules">РџСЂР°РІРёР»Р° РїРѕР»СЊР·РѕРІР°РЅРёСЏ</a></li>
+        <li><a onclick="openModal('privacy')" data-i18n="footerPrivacy">Обработка персональных данных</a></li>
+        <li><a onclick="openModal('terms')"   data-i18n="footerTerms">Пользовательское соглашение</a></li>
+        <li><a onclick="openModal('rules')"   data-i18n="footerRules">Правила пользования</a></li>
       </ul>
     </div>
 
@@ -394,15 +394,15 @@
   </div>
 </footer>
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+<!-- ════════════════════════════════════════
      LEGAL MODALS
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
+════════════════════════════════════════ -->
 
-<!-- РџРѕР»РёС‚РёРєР° РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С… -->
+<!-- Политика персональных данных -->
 <div class="modal-overlay" id="modalPrivacy" onclick="closeModalOutside(event,'modalPrivacy')">
   <div class="modal">
     <div class="modal-header">
-      <h3 data-i18n="footerPrivacy">РћР±СЂР°Р±РѕС‚РєР° РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С…</h3>
+      <h3 data-i18n="footerPrivacy">Обработка персональных данных</h3>
       <button class="modal-close" onclick="closeModal('privacy')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -416,21 +416,21 @@
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
         </div>
-        <h4 data-i18n="modalPlaceholderTitle">Р”РѕРєСѓРјРµРЅС‚ РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ</h4>
+        <h4 data-i18n="modalPlaceholderTitle">Документ в разработке</h4>
         <p data-i18n="modalPrivacyDesc">
-          РџРѕР»РёС‚РёРєР° РѕР±СЂР°Р±РѕС‚РєРё РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С… Р±СѓРґРµС‚ РѕРїСѓР±Р»РёРєРѕРІР°РЅР° РІ Р±Р»РёР¶Р°Р№С€РµРµ РІСЂРµРјСЏ.
+          Политика обработки персональных данных будет опубликована в ближайшее время.
         </p>
-        <code class="modal-hint">config.js в†’ legal.privacy</code>
+        <code class="modal-hint">config.js → legal.privacy</code>
       </div>
     </div>
   </div>
 </div>
 
-<!-- РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ -->
+<!-- Пользовательское соглашение -->
 <div class="modal-overlay" id="modalTerms" onclick="closeModalOutside(event,'modalTerms')">
   <div class="modal">
     <div class="modal-header">
-      <h3 data-i18n="footerTerms">РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ</h3>
+      <h3 data-i18n="footerTerms">Пользовательское соглашение</h3>
       <button class="modal-close" onclick="closeModal('terms')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -447,21 +447,21 @@
             <line x1="16" y1="17" x2="8" y2="17"/>
           </svg>
         </div>
-        <h4 data-i18n="modalPlaceholderTitle">Р”РѕРєСѓРјРµРЅС‚ РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ</h4>
+        <h4 data-i18n="modalPlaceholderTitle">Документ в разработке</h4>
         <p data-i18n="modalTermsDesc">
-          РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ Р±СѓРґРµС‚ РѕРїСѓР±Р»РёРєРѕРІР°РЅРѕ РІ Р±Р»РёР¶Р°Р№С€РµРµ РІСЂРµРјСЏ.
+          Пользовательское соглашение будет опубликовано в ближайшее время.
         </p>
-        <code class="modal-hint">config.js в†’ legal.terms</code>
+        <code class="modal-hint">config.js → legal.terms</code>
       </div>
     </div>
   </div>
 </div>
 
-<!-- РџСЂР°РІРёР»Р° РїРѕР»СЊР·РѕРІР°РЅРёСЏ -->
+<!-- Правила пользования -->
 <div class="modal-overlay" id="modalRules" onclick="closeModalOutside(event,'modalRules')">
   <div class="modal">
     <div class="modal-header">
-      <h3 data-i18n="footerRules">РџСЂР°РІРёР»Р° РїРѕР»СЊР·РѕРІР°РЅРёСЏ</h3>
+      <h3 data-i18n="footerRules">Правила пользования</h3>
       <button class="modal-close" onclick="closeModal('rules')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -477,21 +477,21 @@
             <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
         </div>
-        <h4 data-i18n="modalPlaceholderTitle">Р”РѕРєСѓРјРµРЅС‚ РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ</h4>
+        <h4 data-i18n="modalPlaceholderTitle">Документ в разработке</h4>
         <p data-i18n="modalRulesDesc">
-          РџСЂР°РІРёР»Р° РїРѕР»СЊР·РѕРІР°РЅРёСЏ СЃРµСЂРІРёСЃРѕРј Р±СѓРґСѓС‚ РѕРїСѓР±Р»РёРєРѕРІР°РЅС‹ РІ Р±Р»РёР¶Р°Р№С€РµРµ РІСЂРµРјСЏ.
+          Правила пользования сервисом будут опубликованы в ближайшее время.
         </p>
-        <code class="modal-hint">config.js в†’ legal.rules</code>
+        <code class="modal-hint">config.js → legal.rules</code>
       </div>
     </div>
   </div>
 </div>
 
-<!-- в”Ђв”Ђ РџРѕРїР°Рї РѕРїР»Р°С‚С‹ (Р°РєС‚РёРІРёСЂСѓРµС‚СЃСЏ С‡РµСЂРµР· config.js в†’ payment.usePopup = true) в”Ђв”Ђ -->
+<!-- ── Попап оплаты (активируется через config.js → payment.usePopup = true) ── -->
 <div class="modal-overlay" id="modalPayment" onclick="closeModalOutside(event,'modalPayment')">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="paymentPopupTitle">РћС„РѕСЂРјР»РµРЅРёРµ РїРѕРєСѓРїРєРё</h3>
+      <h3 id="paymentPopupTitle">Оформление покупки</h3>
       <button class="modal-close" onclick="closeModal('payment')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -500,24 +500,24 @@
     </div>
     <div class="modal-body">
       <div class="payment-popup-content">
-        <p id="paymentPopupBody">Р”Р»СЏ РѕС„РѕСЂРјР»РµРЅРёСЏ РїРѕРєСѓРїРєРё СЃРІСЏР¶РёС‚РµСЃСЊ СЃ РЅР°РјРё:</p>
+        <p id="paymentPopupBody">Для оформления покупки свяжитесь с нами:</p>
         <a id="paymentPopupLink" href="#" target="_blank" rel="noopener" class="payment-popup-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <path d="M21.5 3.5L2.5 10.5l6.5 2 2 6.5 3-4 5.5 4z"/>
           </svg>
-          РќР°РїРёСЃР°С‚СЊ РЅР°Рј
+          Написать нам
         </a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- в”Ђв”Ђ РђР’РўРћР РР—РђР¦РРЇ / Р Р•Р“РРЎРўР РђР¦РРЇ в”Ђв”Ђ -->
+<!-- ── АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ── -->
 <div class="modal-overlay" id="modalAuth" onclick="closeModalOutside(event,'modalAuth')">
   <div class="modal auth-modal">
     <div class="modal-header">
-      <h3 id="authModalTitle" data-i18n="authTabRegister">Р РµРіРёСЃС‚СЂР°С†РёСЏ</h3>
-      <button class="modal-close" onclick="closeModal('auth')" aria-label="Р—Р°РєСЂС‹С‚СЊ">
+      <h3 id="authModalTitle" data-i18n="authTabRegister">Регистрация</h3>
+      <button class="modal-close" onclick="closeModal('auth')" aria-label="Закрыть">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
@@ -525,62 +525,62 @@
     </div>
     <div class="modal-body">
       <div class="auth-tabs">
-        <button type="button" class="auth-tab active" id="authTabRegister" onclick="setAuthTab('register')" data-i18n="authTabRegister">Р РµРіРёСЃС‚СЂР°С†РёСЏ</button>
-        <button type="button" class="auth-tab" id="authTabLogin" onclick="setAuthTab('login')" data-i18n="authTabLogin">Р’С…РѕРґ</button>
+        <button type="button" class="auth-tab active" id="authTabRegister" onclick="setAuthTab('register')" data-i18n="authTabRegister">Регистрация</button>
+        <button type="button" class="auth-tab" id="authTabLogin" onclick="setAuthTab('login')" data-i18n="authTabLogin">Вход</button>
       </div>
 
       <form class="auth-form" id="authRegisterForm" onsubmit="handleRegister(event)" autocomplete="off">
         <div class="auth-field">
-          <label for="authRegLogin" data-i18n="authLoginLabel">Р›РѕРіРёРЅ</label>
+          <label for="authRegLogin" data-i18n="authLoginLabel">Логин</label>
           <input type="text" id="authRegLogin" maxlength="32" required
                  pattern="[A-Za-z0-9_.-]{3,32}"
-                 data-i18n-placeholder="authLoginPlaceholder" placeholder="РќР°РїСЂРёРјРµСЂ: hydra_player" />
+                 data-i18n-placeholder="authLoginPlaceholder" placeholder="Например: hydra_player" />
         </div>
         <div class="auth-field">
-          <label for="authRegName" data-i18n="authNameLabel">РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</label>
+          <label for="authRegName" data-i18n="authNameLabel">Имя пользователя</label>
           <input type="text" id="authRegName" maxlength="32" required
-                 data-i18n-placeholder="authNamePlaceholder" placeholder="РљР°Рє С‚РµР±СЏ Р·РѕРІСѓС‚" />
+                 data-i18n-placeholder="authNamePlaceholder" placeholder="Как тебя зовут" />
         </div>
         <div class="auth-field">
-          <label for="authRegPassword" data-i18n="authPasswordLabel">РџР°СЂРѕР»СЊ</label>
+          <label for="authRegPassword" data-i18n="authPasswordLabel">Пароль</label>
           <input type="password" id="authRegPassword" minlength="8" maxlength="128" required
-                 data-i18n-placeholder="authPasswordPlaceholder" placeholder="РњРёРЅРёРјСѓРј 8 СЃРёРјРІРѕР»РѕРІ" />
+                 data-i18n-placeholder="authPasswordPlaceholder" placeholder="Минимум 8 символов" />
         </div>
         <div class="auth-field">
-          <label for="authRegPassword2" data-i18n="authConfirmLabel">РџРѕРІС‚РѕСЂРёС‚Рµ РїР°СЂРѕР»СЊ</label>
+          <label for="authRegPassword2" data-i18n="authConfirmLabel">Повторите пароль</label>
           <input type="password" id="authRegPassword2" minlength="8" maxlength="128" required
-                 data-i18n-placeholder="authConfirmPlaceholder" placeholder="Р’РІРµРґРё РїР°СЂРѕР»СЊ РµС‰С‘ СЂР°Р·" />
+                 data-i18n-placeholder="authConfirmPlaceholder" placeholder="Введи пароль ещё раз" />
         </div>
-        <p class="auth-hint" data-i18n="authPasswordHint">РџР°СЂРѕР»СЊ РїСЂРёРґСѓРјС‹РІР°РµС€СЊ СЃР°Рј. РњРёРЅРёРјСѓРј 8 СЃРёРјРІРѕР»РѕРІ.</p>
-        <button type="submit" class="btn btn-primary auth-submit" data-i18n="authCreate">РЎРѕР·РґР°С‚СЊ Р°РєРєР°СѓРЅС‚</button>
+        <p class="auth-hint" data-i18n="authPasswordHint">Пароль придумываешь сам. Минимум 8 символов.</p>
+        <button type="submit" class="btn btn-primary auth-submit" data-i18n="authCreate">Создать аккаунт</button>
       </form>
 
       <form class="auth-form" id="authLoginForm" onsubmit="handleLogin(event)" autocomplete="off" hidden>
         <div class="auth-field">
-          <label for="authLoginInput" data-i18n="authLoginLabel">Р›РѕРіРёРЅ</label>
+          <label for="authLoginInput" data-i18n="authLoginLabel">Логин</label>
           <input type="text" id="authLoginInput" maxlength="32" required
-                 data-i18n-placeholder="authLoginPlaceholder" placeholder="РќР°РїСЂРёРјРµСЂ: hydra_player" />
+                 data-i18n-placeholder="authLoginPlaceholder" placeholder="Например: hydra_player" />
         </div>
         <div class="auth-field">
-          <label for="authLoginPassword" data-i18n="authPasswordLabel">РџР°СЂРѕР»СЊ</label>
+          <label for="authLoginPassword" data-i18n="authPasswordLabel">Пароль</label>
           <input type="password" id="authLoginPassword" maxlength="128" required
-                 data-i18n-placeholder="authPasswordPlaceholder" placeholder="РњРёРЅРёРјСѓРј 8 СЃРёРјРІРѕР»РѕРІ" />
+                 data-i18n-placeholder="authPasswordPlaceholder" placeholder="Минимум 8 символов" />
         </div>
-        <button type="submit" class="btn btn-primary auth-submit" data-i18n="authSignIn">Р’РѕР№С‚Рё</button>
+        <button type="submit" class="btn btn-primary auth-submit" data-i18n="authSignIn">Войти</button>
       </form>
 
       <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
-      <p class="auth-note" data-i18n="authLocalNote">РђРєРєР°СѓРЅС‚С‹ С…СЂР°РЅСЏС‚СЃСЏ РІ РѕР±Р»Р°РєРµ Рё СЂР°Р±РѕС‚Р°СЋС‚ РЅР° Р»СЋР±РѕРј СѓСЃС‚СЂРѕР№СЃС‚РІРµ.</p>
+      <p class="auth-note" data-i18n="authLocalNote">Аккаунты хранятся в облаке и работают на любом устройстве.</p>
     </div>
   </div>
 </div>
 
-<!-- в”Ђв”Ђ Р›РР§РќР«Р™ РљРђР‘РРќР•Рў в”Ђв”Ђ -->
+<!-- ── ЛИЧНЫЙ КАБИНЕТ ── -->
 <div class="modal-overlay" id="modalProfile" onclick="closeModalOutside(event,'modalProfile')">
   <div class="modal auth-modal account-panel">
     <div class="modal-header">
-      <h3 data-i18n="accountPanel">Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚</h3>
-      <button class="modal-close" onclick="closeModal('profile')" aria-label="Р—Р°РєСЂС‹С‚СЊ">
+      <h3 data-i18n="accountPanel">Личный кабинет</h3>
+      <button class="modal-close" onclick="closeModal('profile')" aria-label="Закрыть">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
@@ -591,98 +591,98 @@
       <div class="account-top">
         <div class="profile-avatar" id="profileAvatar">H</div>
         <div class="profile-main">
-          <div class="profile-name" id="profileName">вЂ”</div>
-          <div class="profile-login" id="profileLogin">вЂ”</div>
+          <div class="profile-name" id="profileName">—</div>
+          <div class="profile-login" id="profileLogin">—</div>
         </div>
-        <span class="account-badge" id="accountGroupBadge" data-i18n="accountGroupUser">РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ</span>
+        <span class="account-badge" id="accountGroupBadge" data-i18n="accountGroupUser">Пользователь</span>
       </div>
 
       <div class="account-grid">
         <div class="account-row">
           <span class="account-label" data-i18n="accountUid">UID</span>
-          <span class="account-value" id="accountUid">вЂ”</span>
+          <span class="account-value" id="accountUid">—</span>
         </div>
         <div class="account-row">
-          <span class="account-label" data-i18n="accountGroup">Р“СЂСѓРїРїР°</span>
-          <span class="account-value" id="accountGroup">вЂ”</span>
+          <span class="account-label" data-i18n="accountGroup">Группа</span>
+          <span class="account-value" id="accountGroup">—</span>
         </div>
         <div class="account-row">
-          <span class="account-label" data-i18n="accountRegDate">Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё</span>
-          <span class="account-value" id="accountRegDate">вЂ”</span>
+          <span class="account-label" data-i18n="accountRegDate">Дата регистрации</span>
+          <span class="account-value" id="accountRegDate">—</span>
         </div>
         <div class="account-row">
-          <span class="account-label" data-i18n="accountLastLogin">РџРѕСЃР»РµРґРЅРёР№ РІС…РѕРґ</span>
-          <span class="account-value" id="accountLastLogin">вЂ”</span>
+          <span class="account-label" data-i18n="accountLastLogin">Последний вход</span>
+          <span class="account-value" id="accountLastLogin">—</span>
         </div>
         <div class="account-row">
           <span class="account-label" data-i18n="accountEmail">E-mail</span>
-          <span class="account-value account-value-email" id="accountEmail">вЂ”</span>
+          <span class="account-value account-value-email" id="accountEmail">—</span>
         </div>
         <div class="account-row">
           <span class="account-label" data-i18n="accountHwid">HWID</span>
-          <span class="account-value account-value-hwid" id="accountHwid">вЂ”</span>
+          <span class="account-value account-value-hwid" id="accountHwid">—</span>
         </div>
         <div class="account-row">
-          <span class="account-label" data-i18n="accountPurchased">РљСѓРїР»РµРЅРЅС‹Рµ С‚РѕРІР°СЂС‹</span>
-          <span class="account-value" id="accountPurchased">вЂ”</span>
+          <span class="account-label" data-i18n="accountPurchased">Купленные товары</span>
+          <span class="account-value" id="accountPurchased">—</span>
         </div>
         <div class="account-row account-row-highlight">
-          <span class="account-label" data-i18n="profileSubscription">РџРѕРґРїРёСЃРєР°</span>
-          <strong class="account-value account-value-accent" id="profileSubscriptionValue">вЂ”</strong>
+          <span class="account-label" data-i18n="profileSubscription">Подписка</span>
+          <strong class="account-value account-value-accent" id="profileSubscriptionValue">—</strong>
         </div>
         <div class="account-row">
-          <span class="account-label" data-i18n="accountTelegram">РўРµР»РµРіСЂР°Рј</span>
-          <span class="account-value" data-i18n="accountNotLinked">РќРµ РїСЂРёРІСЏР·Р°РЅ</span>
+          <span class="account-label" data-i18n="accountTelegram">Телеграм</span>
+          <span class="account-value" data-i18n="accountNotLinked">Не привязан</span>
         </div>
       </div>
 
       <form class="account-key-form" onsubmit="handleActivateKey(event)" autocomplete="off">
-        <label for="accountKeyInput" data-i18n="accountKeyActivation">РђРєС‚РёРІР°С†РёСЏ РєР»СЋС‡Р°</label>
+        <label for="accountKeyInput" data-i18n="accountKeyActivation">Активация ключа</label>
         <div class="account-key-row">
           <input type="text" id="accountKeyInput" maxlength="64"
-                 data-i18n-placeholder="accountKeyPlaceholder" placeholder="Р’РІРµРґРёС‚Рµ РєР»СЋС‡" />
-          <button type="submit" class="btn btn-primary" data-i18n="accountActivate">РђРєС‚РёРІРёСЂРѕРІР°С‚СЊ</button>
+                 data-i18n-placeholder="accountKeyPlaceholder" placeholder="Введите ключ" />
+          <button type="submit" class="btn btn-primary" data-i18n="accountActivate">Активировать</button>
         </div>
       </form>
 
       <div class="account-actions">
-        <button type="button" onclick="document.getElementById('accountKeyInput')?.focus()" data-i18n="accountPromo">РђРєС‚РёРІРёСЂРѕРІР°С‚СЊ РїСЂРѕРјРѕРєРѕРґ</button>
-        <button type="button" onclick="document.getElementById('accountPurchased')?.scrollIntoView({behavior:'smooth',block:'center'})" data-i18n="accountPurchasedBtn">РљСѓРїР»РµРЅРЅС‹Рµ С‚РѕРІР°СЂС‹</button>
-        <a href="HydraClient-Launcher.exe" download data-i18n="downloadLauncher">РЎРєР°С‡Р°С‚СЊ Р›Р°СѓРЅС‡РµСЂ</a>
-        <button type="button" onclick="document.getElementById('profileOldPassword')?.focus()" data-i18n="profileChangePassword">РЎРјРµРЅРёС‚СЊ РїР°СЂРѕР»СЊ</button>
+        <button type="button" onclick="document.getElementById('accountKeyInput')?.focus()" data-i18n="accountPromo">Активировать промокод</button>
+        <button type="button" onclick="document.getElementById('accountPurchased')?.scrollIntoView({behavior:'smooth',block:'center'})" data-i18n="accountPurchasedBtn">Купленные товары</button>
+        <a href="HydraClient-Launcher.exe" download data-i18n="downloadLauncher">Скачать Лаунчер</a>
+        <button type="button" onclick="document.getElementById('profileOldPassword')?.focus()" data-i18n="profileChangePassword">Сменить пароль</button>
       </div>
 
       <div class="profile-divider"></div>
 
-      <h4 class="profile-section-title" data-i18n="profileChangePassword">РЎРјРµРЅР° РїР°СЂРѕР»СЏ</h4>
+      <h4 class="profile-section-title" data-i18n="profileChangePassword">Смена пароля</h4>
       <form class="auth-form" id="changePasswordForm" onsubmit="handleChangePassword(event)" autocomplete="off">
         <div class="auth-field">
-          <label for="profileOldPassword" data-i18n="profileOldPassword">РЎС‚Р°СЂС‹Р№ РїР°СЂРѕР»СЊ</label>
+          <label for="profileOldPassword" data-i18n="profileOldPassword">Старый пароль</label>
           <input type="password" id="profileOldPassword" required maxlength="128"
-                 data-i18n-placeholder="profileOldPasswordPlaceholder" placeholder="Р’РІРµРґРё С‚РµРєСѓС‰РёР№ РїР°СЂРѕР»СЊ" />
+                 data-i18n-placeholder="profileOldPasswordPlaceholder" placeholder="Введи текущий пароль" />
         </div>
         <div class="auth-field">
-          <label for="profileNewPassword" data-i18n="profileNewPassword">РќРѕРІС‹Р№ РїР°СЂРѕР»СЊ</label>
+          <label for="profileNewPassword" data-i18n="profileNewPassword">Новый пароль</label>
           <input type="password" id="profileNewPassword" required minlength="8" maxlength="128"
-                 data-i18n-placeholder="profileNewPasswordPlaceholder" placeholder="РњРёРЅРёРјСѓРј 8 СЃРёРјРІРѕР»РѕРІ" />
+                 data-i18n-placeholder="profileNewPasswordPlaceholder" placeholder="Минимум 8 символов" />
         </div>
         <div class="auth-field">
-          <label for="profileConfirmPassword" data-i18n="profileConfirmPassword">РџРѕРІС‚РѕСЂРёС‚Рµ РЅРѕРІС‹Р№ РїР°СЂРѕР»СЊ</label>
+          <label for="profileConfirmPassword" data-i18n="profileConfirmPassword">Повторите новый пароль</label>
           <input type="password" id="profileConfirmPassword" required minlength="8" maxlength="128"
-                 data-i18n-placeholder="profileConfirmPasswordPlaceholder" placeholder="Р’РІРµРґРё РЅРѕРІС‹Р№ РїР°СЂРѕР»СЊ РµС‰С‘ СЂР°Р·" />
+                 data-i18n-placeholder="profileConfirmPasswordPlaceholder" placeholder="Введи новый пароль ещё раз" />
         </div>
-        <p class="auth-hint" data-i18n="profilePasswordHint">Р”Р»СЏ СЃРјРµРЅС‹ РїР°СЂРѕР»СЏ РЅСѓР¶РЅРѕ РІРІРµСЃС‚Рё СЃС‚Р°СЂС‹Р№ РїР°СЂРѕР»СЊ.</p>
-        <button type="submit" class="btn btn-primary auth-submit" data-i18n="profileChangePassword">РЎРјРµРЅРёС‚СЊ РїР°СЂРѕР»СЊ</button>
+        <p class="auth-hint" data-i18n="profilePasswordHint">Для смены пароля нужно ввести старый пароль.</p>
+        <button type="submit" class="btn btn-primary auth-submit" data-i18n="profileChangePassword">Сменить пароль</button>
       </form>
 
       <p class="auth-status" id="profileStatus" role="status" aria-live="polite"></p>
 
-      <button class="profile-logout" onclick="logoutAccount(); closeModal('profile')" data-i18n="authLogout">Р’С‹Р№С‚Рё</button>
+      <button class="profile-logout" onclick="logoutAccount(); closeModal('profile')" data-i18n="authLogout">Выйти</button>
     </div>
   </div>
 </div>
 
-<!-- в”Ђв”Ђ TOAST в”Ђв”Ђ -->
+<!-- ── TOAST ── -->
 <div class="toast" id="toast">
   <span id="toastMsg"></span>
 </div>
@@ -691,4 +691,3 @@
 <script src="script.js?v=5"></script>
 </body>
 </html>
-
