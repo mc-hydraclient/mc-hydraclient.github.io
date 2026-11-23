@@ -73,6 +73,7 @@
   <button class="mobile-auth" onclick="closeMobileMenu(); openProfile()" data-mob-i18n="profileTitle">Профиль</button>
   <button class="mobile-auth" id="mobRegister" onclick="closeMobileMenu(); handleNavRegister()" data-mob-i18n="navRegister">Регистрация</button>
   <button class="mobile-auth" id="mobLogin" onclick="closeMobileMenu(); handleNavLogin()" data-mob-i18n="navLogin">Войти</button>
+  <a href="HydraClient-Launcher.exe" class="mobile-auth" download data-mob-i18n="downloadLauncher">Скачать Лаунчер</a>
 </div>
 
 <!-- ════════════════════════════════════════
@@ -114,6 +115,9 @@
           </a>
           <a href="#features" class="btn btn-outline" id="heroBtnLearn">
             Узнать больше
+          </a>
+          <a href="HydraClient-Launcher.exe" class="btn btn-outline" id="heroBtnDownload" download data-i18n="downloadLauncher">
+            Скачать Лаунчер
           </a>
         </div>
 
@@ -646,6 +650,7 @@
       <div class="account-actions">
         <button type="button" onclick="document.getElementById('accountKeyInput')?.focus()" data-i18n="accountPromo">Активировать промокод</button>
         <button type="button" onclick="document.getElementById('accountPurchased')?.scrollIntoView({behavior:'smooth',block:'center'})" data-i18n="accountPurchasedBtn">Купленные товары</button>
+        <a href="HydraClient-Launcher.exe" download data-i18n="downloadLauncher">Скачать Лаунчер</a>
         <button type="button" onclick="document.getElementById('profileOldPassword')?.focus()" data-i18n="profileChangePassword">Сменить пароль</button>
       </div>
 
