@@ -495,7 +495,8 @@ const MODAL_IDS = {
   terms:   'modalTerms',
   rules:   'modalRules',
   payment: 'modalPayment',
-  auth:    'modalAuth'
+  auth:    'modalAuth',
+  profile: 'modalProfile'
 };
 
 function openModal(key) {
@@ -546,62 +547,99 @@ function showToast(msg, type = 'success') {
 
 
 /* ════════════════════════════════════════
-   ACCOUNTS — локальная демо-регистрация
-   Пароль придумывает пользователь.
-   Хранится только salt + PBKDF2-хеш в браузере.
+   ACCOUNTS — локальное хранилище браузера
+   Регистрация/вход прямо на сайте, без GitHub.
+   Пароль хранится как PBKDF2-SHA256 хеш.
    ════════════════════════════════════════ */
-const ACCOUNTS_KEY = 'hydraclient_accounts_v1';
-const SESSION_KEY  = 'hydraclient_session_v1';
+const SESSION_KEY = 'hydraclient_session_v1';
+const USERS_KEY   = 'hydraclient_users_v1';
+
+function stableHash(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function uidForLogin(login) {
+  return String((stableHash(login) % 900000) + 100000);
+}
+
+function hwidForDevice() {
+  const raw = [
+    navigator.userAgent || '',
+    screen.width + 'x' + screen.height,
+    Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+    (navigator.languages || [navigator.language]).join(',')
+  ].join('|');
+  const a = stableHash(raw).toString(16);
+  const b = stableHash(raw.split('').reverse().join('')).toString(16);
+  return (a + b + a + b + a).slice(0, 40);
+}
 
 function authText(key) {
   return CONFIG.i18n[currentLang]?.[key] ?? CONFIG.i18n.ru[key] ?? key;
 }
 
-function getAccounts() {
-  try {
-    const raw = localStorage.getItem(ACCOUNTS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) {
-    return [];
-  }
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
+  catch (e) { return null; }
 }
 
-function saveAccounts(accounts) {
-  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+function saveSession(session) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
 }
 
-function getSessionLogin() {
-  return localStorage.getItem(SESSION_KEY);
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
 }
 
-function bytesToBase64(bytes) {
-  let str = '';
-  bytes.forEach(b => { str += String.fromCharCode(b); });
-  return btoa(str);
+function loadUsers() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); }
+  catch (e) { return {}; }
 }
 
-function base64ToBytes(b64) {
-  const str = atob(b64);
-  const out = new Uint8Array(str.length);
-  for (let i = 0; i < str.length; i++) out[i] = str.charCodeAt(i);
-  return out;
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
-async function derivePasswordHash(password, saltBytes) {
-  if (!window.crypto?.subtle) throw new Error('Crypto unavailable');
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits']
-  );
+function currentAccount() {
+  const session = getSession();
+  if (!session?.login) return null;
+  return { login: session.login, name: session.name || session.login };
+}
+
+function emailForLogin(login) {
+  const domain = CONFIG.auth?.emailDomain || 'hydraclient.app';
+  return `${login.toLowerCase()}@${domain}`;
+}
+
+function bufToHex(buf) {
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function hexToBuf(hex) {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return bytes;
+}
+
+async function hashPassword(password, saltHex) {
+  const enc = new TextEncoder();
+  const salt = saltHex ? hexToBuf(saltHex) : crypto.getRandomValues(new Uint8Array(16));
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt: saltBytes, iterations: 150000, hash: 'SHA-256' },
-    key,
-    256
+    { name: 'PBKDF2', salt, iterations: 120000, hash: 'SHA-256' },
+    keyMaterial, 256
   );
-  return bytesToBase64(new Uint8Array(bits));
+  return { hash: bufToHex(bits), salt: bufToHex(salt) };
+}
+
+async function verifyPassword(password, saltHex, expectedHash) {
+  const { hash } = await hashPassword(password, saltHex);
+  return hash === expectedHash;
 }
 
 function setAuthStatus(message = '', type = 'info') {
@@ -636,125 +674,312 @@ function openAuth(mode = 'register') {
 }
 
 function handleNavLogin() {
-  const acc = currentAccount();
-  if (acc) {
-    showToast(`${authText('authWelcome')} ${acc.name}`, 'info');
-  } else {
-    openAuth('login');
-  }
+  if (getSession()) openProfile();
+  else openAuth('login');
 }
 
 function handleNavRegister() {
-  if (getSessionLogin()) {
-    logoutAccount();
-  } else {
-    openAuth('register');
-  }
-}
-
-function currentAccount() {
-  const login = getSessionLogin();
-  if (!login) return null;
-  return getAccounts().find(a => a.loginLower === login) ?? null;
+  if (getSession()) logoutAccount();
+  else openAuth('register');
 }
 
 function updateAuthUI() {
+  const acc = currentAccount();
   const loginBtn = document.getElementById('navLogin');
   const registerBtn = document.getElementById('navRegister');
-  const acc = currentAccount();
+  const mobLogin = document.getElementById('mobLogin');
+  const mobRegister = document.getElementById('mobRegister');
 
   if (loginBtn) {
     loginBtn.textContent = acc ? acc.name : authText('navLogin');
     loginBtn.classList.toggle('is-user', !!acc);
+    loginBtn.title = acc ? authText('accountPanel') : authText('navLogin');
   }
   if (registerBtn) {
     registerBtn.textContent = acc ? authText('authLogout') : authText('navRegister');
     registerBtn.classList.toggle('is-logout', !!acc);
   }
+  if (mobLogin) {
+    mobLogin.textContent = acc ? acc.name : authText('navLogin');
+    mobLogin.classList.toggle('is-user', !!acc);
+  }
+  if (mobRegister) {
+    mobRegister.textContent = acc ? authText('authLogout') : authText('navRegister');
+  }
+}
+
+function readRegistrationForm() {
+  return {
+    login:    document.getElementById('authRegLogin')?.value.trim() ?? '',
+    name:     document.getElementById('authRegName')?.value.trim() ?? '',
+    password: document.getElementById('authRegPassword')?.value ?? '',
+    confirm:  document.getElementById('authRegPassword2')?.value ?? ''
+  };
+}
+
+function validateRegistration({ login, name, password, confirm }) {
+  if (!/^[A-Za-z0-9_.-]{3,32}$/.test(login)) return 'authErrLoginFormat';
+  if (name.length < 2 || name.length > 32) return 'authErrName';
+  if (password.length < 8) return 'authErrPassword';
+  if (password !== confirm) return 'authErrPasswordMismatch';
+  return null;
+}
+
+function buildSession(user) {
+  return {
+    login: user.login,
+    name: user.name,
+    email: emailForLogin(user.login),
+    uid: user.uid || uidForLogin(user.login),
+    created_at: user.created_at,
+    last_login: user.last_login,
+    hwid: user.hwid || hwidForDevice(),
+    subscription_until: user.subscription_until || null
+  };
 }
 
 async function handleRegister(event) {
   event.preventDefault();
+  const data = readRegistrationForm();
+  const invalid = validateRegistration(data);
+  if (invalid) return setAuthStatus(authText(invalid), 'error');
 
-  const login    = document.getElementById('authRegLogin')?.value.trim() ?? '';
-  const name     = document.getElementById('authRegName')?.value.trim() ?? '';
-  const password = document.getElementById('authRegPassword')?.value ?? '';
-  const confirm  = document.getElementById('authRegPassword2')?.value ?? '';
-
-  if (!/^[A-Za-z0-9_.-]{3,32}$/.test(login)) {
-    return setAuthStatus(authText('authErrLoginFormat'), 'error');
-  }
-  if (name.length < 2 || name.length > 32) {
-    return setAuthStatus(authText('authErrName'), 'error');
-  }
-  if (password.length < 8) {
-    return setAuthStatus(authText('authErrPassword'), 'error');
-  }
-  if (password !== confirm) {
-    return setAuthStatus(authText('authErrPasswordMismatch'), 'error');
-  }
-
-  const accounts = getAccounts();
-  if (accounts.some(a => a.loginLower === login.toLowerCase())) {
-    return setAuthStatus(authText('authErrLoginTaken'), 'error');
-  }
+  const login = data.login.toLowerCase();
+  const users = loadUsers();
+  if (users[login]) return setAuthStatus(authText('authErrLoginTaken'), 'error');
 
   try {
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const hash = await derivePasswordHash(password, salt);
-    accounts.push({
+    const { hash, salt } = await hashPassword(data.password);
+    const nowIso = new Date().toISOString();
+    users[login] = {
       login,
-      loginLower: login.toLowerCase(),
-      name,
-      salt: bytesToBase64(salt),
-      hash,
-      createdAt: new Date().toISOString()
-    });
-    saveAccounts(accounts);
+      name: data.name,
+      passwordHash: hash,
+      salt,
+      uid: uidForLogin(login),
+      created_at: nowIso,
+      last_login: null,
+      hwid: hwidForDevice(),
+      subscription_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    };
+    saveUsers(users);
 
     document.getElementById('authRegisterForm')?.reset();
     const loginInput = document.getElementById('authLoginInput');
-    if (loginInput) loginInput.value = login;
+    if (loginInput) loginInput.value = data.login;
     setAuthTab('login');
     setAuthStatus(authText('authSuccessRegistered'), 'success');
     showToast(authText('authSuccessRegistered'), 'success');
-  } catch (e) {
-    setAuthStatus(authText('authErrCrypto'), 'error');
+  } catch (err) {
+    console.error(err);
+    setAuthStatus(authText('authErrNetwork'), 'error');
   }
 }
 
 async function handleLogin(event) {
   event.preventDefault();
 
-  const login    = document.getElementById('authLoginInput')?.value.trim() ?? '';
+  const loginRaw = document.getElementById('authLoginInput')?.value.trim() ?? '';
   const password = document.getElementById('authLoginPassword')?.value ?? '';
-  const accounts = getAccounts();
-  const account  = accounts.find(a => a.loginLower === login.toLowerCase());
+  const login = loginRaw.toLowerCase();
 
-  if (!account) {
-    return setAuthStatus(authText('authErrNotFound'), 'error');
-  }
+  if (!login || !password) return setAuthStatus(authText('authErrNotFound'), 'error');
+
+  const users = loadUsers();
+  const user = users[login];
+  if (!user) return setAuthStatus(authText('authErrNotFound'), 'error');
 
   try {
-    const hash = await derivePasswordHash(password, base64ToBytes(account.salt));
-    if (hash !== account.hash) {
-      return setAuthStatus(authText('authErrWrongPassword'), 'error');
-    }
+    const ok = await verifyPassword(password, user.salt, user.passwordHash);
+    if (!ok) return setAuthStatus(authText('authErrWrongPassword'), 'error');
 
-    localStorage.setItem(SESSION_KEY, account.loginLower);
+    user.last_login = new Date().toISOString();
+    user.hwid = user.hwid || hwidForDevice();
+    users[login] = user;
+    saveUsers(users);
+
+    saveSession(buildSession(user));
     updateAuthUI();
     document.getElementById('authLoginForm')?.reset();
-    setAuthStatus(`${authText('authWelcome')} ${account.name}`, 'success');
+    setAuthStatus(`${authText('authWelcome')} ${user.name}`, 'success');
     showToast(authText('authSuccessLogin'), 'success');
     setTimeout(() => closeModal('auth'), 900);
-  } catch (e) {
-    setAuthStatus(authText('authErrCrypto'), 'error');
+  } catch (err) {
+    console.error(err);
+    setAuthStatus(authText('authErrNetwork'), 'error');
   }
 }
 
-function logoutAccount() {
-  localStorage.removeItem(SESSION_KEY);
+async function logoutAccount() {
+  clearSession();
   updateAuthUI();
   showToast(authText('authSuccessLogout'), 'info');
   setAuthStatus(authText('authSuccessLogout'), 'info');
+}
+
+/* ════════════════════════════════════════
+   PROFILE CAROUSEL
+   ════════════════════════════════════════ */
+let profileSlideIndex = 0;
+
+function renderProfileCarousel() {
+  const track = document.getElementById('profileCarouselTrack');
+  const dots  = document.querySelectorAll('#profileCarouselDots button');
+  const slides = track?.querySelectorAll('.carousel-slide') || [];
+  if (!track || !slides.length) return;
+
+  track.style.transform = `translateX(-${profileSlideIndex * 100}%)`;
+  slides.forEach((slide, i) => slide.classList.toggle('active', i === profileSlideIndex));
+  dots.forEach((dot, i) => dot.classList.toggle('active', i === profileSlideIndex));
+}
+
+function goToProfileSlide(index) {
+  const track = document.getElementById('profileCarouselTrack');
+  const total = track?.querySelectorAll('.carousel-slide').length || 0;
+  if (!total) return;
+  profileSlideIndex = ((index % total) + total) % total;
+  renderProfileCarousel();
+}
+
+function slideProfile(direction) {
+  goToProfileSlide(profileSlideIndex + direction);
+}
+
+/* ════════════════════════════════════════
+   PROFILE — подписка и смена пароля
+   ════════════════════════════════════════ */
+function setProfileStatus(message = '', type = 'info') {
+  const el = document.getElementById('profileStatus');
+  if (!el) return;
+  el.textContent = message;
+  el.className = `auth-status ${message ? type : ''}`.trim();
+}
+
+function subscriptionText(until) {
+  if (!until) return authText('profileNoSubscription');
+  const diff = new Date(until).getTime() - Date.now();
+  if (!Number.isFinite(diff) || diff <= 0) return authText('profileExpired');
+  const days = Math.ceil(diff / (24 * 60 * 60 * 1000));
+  return `${authText('profileDaysLeft')} ${days}`.trim();
+}
+
+async function openProfile() {
+  if (!getSession()) return openAuth('login');
+  closeAllModals();
+  openModal('profile');
+  setProfileStatus('');
+  syncSessionFromUser();
+  renderAccountPanel();
+}
+
+function syncSessionFromUser() {
+  const session = getSession();
+  if (!session?.login) return;
+  const users = loadUsers();
+  const user = users[session.login];
+  if (!user) return;
+  saveSession(buildSession(user));
+  updateAuthUI();
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleString(currentLang === 'ru' ? 'ru-RU' : currentLang === 'uk' ? 'uk-UA' : 'en-GB', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function accountGroup() {
+  const s = getSession() || {};
+  const active = s.subscription_until && new Date(s.subscription_until).getTime() > Date.now();
+  return active ? authText('accountGroupPremium') : authText('accountGroupUser');
+}
+
+function renderAccountPanel() {
+  const s = getSession();
+  if (!s) return;
+  const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value || '—'; };
+
+  set('profileName', s.name || s.login);
+  set('profileLogin', `@${s.login}`);
+  const avatar = document.getElementById('profileAvatar');
+  if (avatar) avatar.textContent = (s.name || 'H').charAt(0).toUpperCase();
+
+  const group = accountGroup();
+  set('accountUid', s.uid || uidForLogin(s.login));
+  set('accountGroup', group);
+  set('accountRegDate', formatDate(s.created_at));
+  set('accountLastLogin', formatDate(s.last_login));
+  set('accountEmail', s.email || emailForLogin(s.login));
+  set('accountHwid', s.hwid || hwidForDevice());
+  set('accountPurchased', authText('accountProduct'));
+  set('profileSubscriptionValue', subscriptionText(s.subscription_until));
+  const badge = document.getElementById('accountGroupBadge');
+  if (badge) badge.textContent = group;
+}
+
+async function handleActivateKey(event) {
+  event.preventDefault();
+  const input = document.getElementById('accountKeyInput');
+  const key = (input?.value || '').trim().toUpperCase();
+  const session = getSession();
+  if (!session) return openAuth('login');
+  if (!key) return setProfileStatus(authText('accountKeyError'), 'error');
+
+  const days = CONFIG.activationKeys?.[key];
+  if (!days) return setProfileStatus(authText('accountKeyError'), 'error');
+
+  const users = loadUsers();
+  const user = users[session.login];
+  if (!user) return setProfileStatus(authText('authErrNotFound'), 'error');
+
+  const base = Math.max(Date.now(), new Date(user.subscription_until || 0).getTime());
+  user.subscription_until = new Date(base + days * 24 * 60 * 60 * 1000).toISOString();
+  user.activated_key = key;
+  users[session.login] = user;
+  saveUsers(users);
+  saveSession(buildSession(user));
+
+  if (input) input.value = '';
+  renderAccountPanel();
+  setProfileStatus(`${authText('accountKeySuccess')} +${days} ${authText('profileDaysShort')}`, 'success');
+  showToast(authText('accountKeySuccess'), 'success');
+}
+
+async function handleChangePassword(event) {
+  event.preventDefault();
+  const session = getSession();
+  if (!session) return openAuth('login');
+
+  const oldPassword = document.getElementById('profileOldPassword')?.value ?? '';
+  const newPassword = document.getElementById('profileNewPassword')?.value ?? '';
+  const confirm     = document.getElementById('profileConfirmPassword')?.value ?? '';
+
+  if (newPassword.length < 8) return setProfileStatus(authText('authErrPassword'), 'error');
+  if (newPassword !== confirm) return setProfileStatus(authText('authErrPasswordMismatch'), 'error');
+
+  const users = loadUsers();
+  const user = users[session.login];
+  if (!user) return setProfileStatus(authText('authErrNotFound'), 'error');
+
+  try {
+    const ok = await verifyPassword(oldPassword, user.salt, user.passwordHash);
+    if (!ok) return setProfileStatus(authText('profileErrOldPassword'), 'error');
+
+    const { hash, salt } = await hashPassword(newPassword);
+    user.passwordHash = hash;
+    user.salt = salt;
+    users[session.login] = user;
+    saveUsers(users);
+    saveSession(buildSession(user));
+
+    document.getElementById('changePasswordForm')?.reset();
+    setProfileStatus(authText('profileSuccessPassword'), 'success');
+    showToast(authText('profileSuccessPassword'), 'success');
+  } catch (err) {
+    console.error(err);
+    setProfileStatus(authText('authErrNetwork'), 'error');
+  }
 }
