@@ -46,14 +46,12 @@
 
 ## Скачивание лаунчера
 
-Кнопка **Скачать Лаунчер** отдаёт файл `HydraClient-Launcher.zip`. Внутри:
+Кнопка **Скачать Лаунчер** скачивает файл `HydraClient-Launcher.exe`.
 
-- `HydraClient-1.21.11.jar` — собранный Fabric-мод;
-- `install-windows.bat` — установка в `%APPDATA%\.minecraft\mods`;
-- `install-mac-linux.sh` — установка в `~/.minecraft/mods`;
-- `INSTALL.txt` — инструкция и требования (Minecraft 1.21.11, Fabric Loader 0.16+, Fabric API, Java 21+).
-
-Если нужен полноценный `.exe`-лаунчер с авторизацией и обновлениями, его ещё предстоит собрать отдельно.
+Это Windows-лаунчер/установщик HydraClient:
+- при нажатии «Установить» копирует `HydraClient-1.21.11.jar` в папку `.minecraft/mods`;
+- если встроенный файл недоступен, пытается скачать мод с сайта;
+- требования: Windows, Minecraft 1.21.11, Fabric Loader 0.16+, Fabric API, Java 21+.
 
 ## Что нужно заменить перед реальными продажами
 
@@ -76,7 +74,8 @@ index.html
 style.css
 script.js
 config.js
-HydraClient-Launcher.zip
+HydraClient-Launcher.exe
+HydraClient-1.21.11.jar
 README.md
 ```
 
