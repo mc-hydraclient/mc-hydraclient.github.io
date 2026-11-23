@@ -907,8 +907,19 @@ function setProfileStatus(message = '', type = 'info') {
   el.className = `auth-status ${message ? type : ''}`.trim();
 }
 
+function isLifetime(until) {
+  return String(until || '').toLowerCase() === 'lifetime';
+}
+
+function isSubscriptionActive(until) {
+  if (isLifetime(until)) return true;
+  const t = new Date(until || 0).getTime();
+  return Number.isFinite(t) && t > Date.now();
+}
+
 function subscriptionText(until) {
   if (!until) return authText('profileNoSubscription');
+  if (isLifetime(until)) return authText('profileLifetime');
   const diff = new Date(until).getTime() - Date.now();
   if (!Number.isFinite(diff) || diff <= 0) return authText('profileExpired');
   const days = Math.ceil(diff / (24 * 60 * 60 * 1000));
@@ -945,8 +956,7 @@ function formatDate(iso) {
 
 function accountGroup() {
   const s = getSession() || {};
-  const active = s.subscription_until && new Date(s.subscription_until).getTime() > Date.now();
-  return active ? authText('accountGroupPremium') : authText('accountGroupUser');
+  return isSubscriptionActive(s.subscription_until) ? authText('accountGroupPremium') : authText('accountGroupUser');
 }
 
 function renderAccountPanel() {
@@ -980,15 +990,23 @@ async function handleActivateKey(event) {
   if (!session) return openAuth('login');
   if (!key) return setProfileStatus(authText('accountKeyError'), 'error');
 
-  const days = CONFIG.activationKeys?.[key];
-  if (!days) return setProfileStatus(authText('accountKeyError'), 'error');
+  const keyValue = CONFIG.activationKeys?.[key];
+  if (!keyValue) return setProfileStatus(authText('accountKeyError'), 'error');
 
   const users = await syncUsersFromRemote();
   const user = users[session.login];
   if (!user) return setProfileStatus(authText('authErrNotFound'), 'error');
 
-  const base = Math.max(Date.now(), new Date(user.subscription_until || 0).getTime());
-  user.subscription_until = new Date(base + days * 24 * 60 * 60 * 1000).toISOString();
+  let msgDays = '';
+  if (keyValue === 'lifetime') {
+    user.subscription_until = 'lifetime';
+    msgDays = authText('profileLifetime');
+  } else {
+    const days = Number(keyValue) || 0;
+    const base = isLifetime(user.subscription_until) ? Date.now() : Math.max(Date.now(), new Date(user.subscription_until || 0).getTime());
+    user.subscription_until = new Date(base + days * 24 * 60 * 60 * 1000).toISOString();
+    msgDays = `+${days} ${authText('profileDaysShort')}`;
+  }
   user.activated_key = key;
   user.updated_at = new Date().toISOString();
   users[session.login] = user;
@@ -998,7 +1016,7 @@ async function handleActivateKey(event) {
 
   if (input) input.value = '';
   renderAccountPanel();
-  setProfileStatus(`${authText('accountKeySuccess')} +${days} ${authText('profileDaysShort')}`, 'success');
+  setProfileStatus(`${authText('accountKeySuccess')} ${msgDays}`.trim(), 'success');
   showToast(authText('accountKeySuccess'), 'success');
 }
 

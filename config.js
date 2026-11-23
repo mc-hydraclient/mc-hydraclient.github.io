@@ -37,10 +37,11 @@ const CONFIG = {
   },
 
   // ─── КЛЮЧИ АКТИВАЦИИ ──────────────────────────────────────
-  // Ключ → количество дней подписки
+  // Ключ → количество дней подписки, "lifetime" = навсегда
   activationKeys: {
-    "HYDRA7":  7,
-    "HYDRA30": 30
+    "HYDRA7":    7,
+    "HYDRA30":   30,
+    "HYDRALIFE": "lifetime"
   },
 
   // ─── ЦВЕТА ───────────────────────────────────────────────
@@ -319,6 +320,7 @@ const CONFIG = {
       profileDaysLeft: "Осталось дней:",
       profileNoSubscription: "Подписка не оформлена",
       profileExpired: "Подписка истекла",
+      profileLifetime: "Навсегда",
       profileChangePassword: "Смена пароля",
       profileOldPassword: "Старый пароль",
       profileNewPassword: "Новый пароль",
@@ -443,6 +445,7 @@ const CONFIG = {
       profileDaysLeft: "Days left:",
       profileNoSubscription: "No active subscription",
       profileExpired: "Subscription expired",
+      profileLifetime: "Lifetime",
       profileChangePassword: "Change password",
       profileOldPassword: "Current password",
       profileNewPassword: "New password",
@@ -567,6 +570,7 @@ const CONFIG = {
       profileDaysLeft: "Залишилося днів:",
       profileNoSubscription: "Підписку не оформлено",
       profileExpired: "Термін підписки закінчився",
+      profileLifetime: "Назавжди",
       profileChangePassword: "Зміна пароля",
       profileOldPassword: "Старий пароль",
       profileNewPassword: "Новий пароль",
@@ -691,6 +695,7 @@ const CONFIG = {
       profileDaysLeft: "Pozostało dni:",
       profileNoSubscription: "Brak aktywnej subskrypcji",
       profileExpired: "Subskrypcja wygasła",
+      profileLifetime: "Na zawsze",
       profileChangePassword: "Zmiana hasła",
       profileOldPassword: "Obecne hasło",
       profileNewPassword: "Nowe hasło",
@@ -815,6 +820,7 @@ const CONFIG = {
       profileDaysLeft: "Kalan gün:",
       profileNoSubscription: "Aktif abonelik yok",
       profileExpired: "Abonelik sona erdi",
+      profileLifetime: "Ömür boyu",
       profileChangePassword: "Şifre değiştir",
       profileOldPassword: "Eski şifre",
       profileNewPassword: "Yeni şifre",
