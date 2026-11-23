@@ -655,7 +655,17 @@
       <div id="adminPanel" class="admin-panel" hidden>
         <div class="profile-divider"></div>
         <h4 class="profile-section-title">Админ-панель</h4>
-        <p class="auth-hint">Бан игрока: введите логин и срок, например <code>Player 13d</code> (d — дни, h — часы, perm — навсегда).</p>
+
+        <form class="account-key-form" onsubmit="handleAdminCreateKey(event)" autocomplete="off">
+          <label for="adminKeyInput">Создать ключ подписки</label>
+          <div class="account-key-row">
+            <input type="text" id="adminKeyInput" maxlength="80" placeholder="XXPAICE-A1CGE1-13d" />
+            <button type="submit" class="btn btn-primary">Создать ключ</button>
+          </div>
+          <p class="auth-hint">В конце ключа укажите срок: <code>13d</code> — дни, <code>12h</code> — часы, <code>30m</code> — минуты, <code>perm</code> — навсегда. Пример: <code>XXPAICE-A1CGE1-13d</code></p>
+        </form>
+
+        <p class="auth-hint" style="margin-top:14px;">Бан игрока: введите логин и срок, например <code>Player 13d</code> (d — дни, h — часы, perm — навсегда).</p>
         <form class="account-key-form" onsubmit="handleAdminBan(event)" autocomplete="off">
           <label for="adminBanInput">Бан аккаунта</label>
           <div class="account-key-row">

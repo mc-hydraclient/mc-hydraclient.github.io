@@ -609,17 +609,47 @@ function usersApiUrl() {
   return (CONFIG.auth?.usersApi || '').replace(/\/$/, '');
 }
 
+const KEYS_KEY = 'hydraclient_keys_v1';
+
+function loadKeys() {
+  try { return JSON.parse(localStorage.getItem(KEYS_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function saveKeys(keys) {
+  localStorage.setItem(KEYS_KEY, JSON.stringify(keys));
+}
+
+async function fetchRemoteData() {
+  const url = usersApiUrl();
+  if (!url) return { users: loadUsers(), keys: loadKeys() };
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error('remote ' + res.status);
+  const data = await res.json();
+  return {
+    users: (data && data.users && typeof data.users === 'object') ? data.users : {},
+    keys: (data && data.keys && typeof data.keys === 'object') ? data.keys : {}
+  };
+}
+
+async function pushRemoteData(users, keys) {
+  const url = usersApiUrl();
+  if (!url) return;
+  await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ users, keys })
+  });
+}
+
 async function syncUsersFromRemote() {
   const url = usersApiUrl();
   if (!url) return loadUsers();
   try {
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error('remote ' + res.status);
-    const data = await res.json();
-    const remote = (data && typeof data === 'object' && data.users && typeof data.users === 'object') ? data.users : {};
+    const data = await fetchRemoteData();
+    const remote = data.users || {};
+    const remoteKeys = data.keys || {};
     const local = loadUsers();
     const merged = { ...local, ...remote };
-    // merge per-user by updated_at
     for (const login of Object.keys({ ...local, ...remote })) {
       const l = local[login];
       const r = remote[login];
@@ -632,6 +662,9 @@ async function syncUsersFromRemote() {
       }
     }
     saveUsers(merged);
+    // merge keys
+    const localKeys = loadKeys();
+    saveKeys({ ...localKeys, ...remoteKeys });
     return merged;
   } catch (e) {
     console.warn('Remote users sync failed', e);
@@ -643,11 +676,12 @@ async function pushUsersToRemote(users) {
   const url = usersApiUrl();
   if (!url) return;
   try {
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ users })
-    });
+    const keys = loadKeys();
+    // try to preserve remote keys by fetching? cheaper to just push merged
+    let remoteKeys = {};
+    try { remoteKeys = (await fetchRemoteData()).keys || {}; } catch(e) {}
+    saveKeys({ ...remoteKeys, ...keys });
+    await pushRemoteData(users, { ...remoteKeys, ...keys });
   } catch (e) {
     console.warn('Remote users push failed', e);
   }
@@ -1020,15 +1054,21 @@ async function handleActivateKey(event) {
   if (!session) return openAuth('login');
   if (!key) return setProfileStatus(authText('accountKeyError'), 'error');
 
-  const keyValue = CONFIG.activationKeys?.[key];
+  let keyValue = CONFIG.activationKeys?.[key];
+  const users = await syncUsersFromRemote();
+  const keys = loadKeys();
+  const dyn = keys[key];
+  if (!keyValue && dyn) {
+    if (dyn.used_by) return setProfileStatus('Этот ключ уже использован.', 'error');
+    keyValue = dyn.duration;
+  }
   if (!keyValue) return setProfileStatus(authText('accountKeyError'), 'error');
 
-  const users = await syncUsersFromRemote();
   const user = users[session.login];
   if (!user) return setProfileStatus(authText('authErrNotFound'), 'error');
 
   let msgDays = '';
-  if (keyValue === 'lifetime') {
+  if (keyValue === 'lifetime' || keyValue === 'perm') {
     user.subscription_until = 'lifetime';
     msgDays = authText('profileLifetime');
   } else {
@@ -1040,8 +1080,22 @@ async function handleActivateKey(event) {
   user.activated_key = key;
   user.updated_at = new Date().toISOString();
   users[session.login] = user;
+  if (dyn && !dyn.used_by) {
+    dyn.used_by = session.login;
+    dyn.used_at = new Date().toISOString();
+    keys[key] = dyn;
+    saveKeys(keys);
+  }
   saveUsers(users);
-  await pushUsersToRemote(users);
+  // push users and keys
+  try {
+    const remote = await fetchRemoteData();
+    const mergedKeys = { ...(remote.keys||{}), ...keys };
+    saveKeys(mergedKeys);
+    await pushRemoteData(users, mergedKeys);
+  } catch(e) {
+    await pushUsersToRemote(users);
+  }
   saveSession(buildSession(user));
 
   if (input) input.value = '';
@@ -1139,4 +1193,48 @@ async function handleAdminUnban(event) {
   document.getElementById('adminUnbanInput').value = '';
   setProfileStatus(`Аккаунт ${targetLogin} разбанен.`, 'success');
   showToast('Игрок разбанен', 'success');
+}
+
+
+function parseKeyDuration(key) {
+  const m = String(key).trim().match(/(?:^|[^a-z0-9])(\d+)(d|h|m)$/i);
+  if (m) return { duration: parseInt(m[1],10), unit: m[2].toLowerCase() };
+  if (/(?:^|[^a-z0-9])(perm|lifetime|forever)$/i.test(key)) return { duration: 'lifetime', unit: 'lifetime' };
+  return null;
+}
+
+async function handleAdminCreateKey(event) {
+  event.preventDefault();
+  const session = getSession();
+  if (!session || !isAdminUser(session)) return setProfileStatus('Нет доступа.', 'error');
+  const raw = (document.getElementById('adminKeyInput')?.value || '').trim();
+  if (!raw) return setProfileStatus('Введите ключ.', 'error');
+  const key = raw.toUpperCase();
+  const parsed = parseKeyDuration(key);
+  if (!parsed) return setProfileStatus('В конце ключа укажите срок: 13d, 12h, 30m или perm.', 'error');
+  if (CONFIG.activationKeys?.[key]) return setProfileStatus('Такой ключ уже существует.', 'error');
+
+  const users = await syncUsersFromRemote();
+  let remote;
+  try { remote = await fetchRemoteData(); } catch(e) { remote = {users, keys: loadKeys()}; }
+  const keys = { ...(remote.keys||{}), ...loadKeys() };
+  if (keys[key]) return setProfileStatus('Такой ключ уже существует.', 'error');
+
+  let duration;
+  let label;
+  if (parsed.duration === 'lifetime') { duration = 'lifetime'; label = 'навсегда'; }
+  else if (parsed.unit === 'h') { duration = Math.max(1, parsed.duration) / 24; label = `${parsed.duration} ч.`; }
+  else if (parsed.unit === 'm') { duration = Math.max(1, parsed.duration) / 1440; label = `${parsed.duration} мин.`; }
+  else { duration = Math.max(1, parsed.duration); label = `${parsed.duration} дн.`; }
+
+  // normalize duration to days number for consistency with existing logic, except lifetime
+  if (duration !== 'lifetime') duration = Number(duration);
+
+  keys[key] = { duration, label, created_by: session.login, created_at: new Date().toISOString(), used_by: null, used_at: null };
+  saveKeys(keys);
+  saveUsers(users);
+  try { await pushRemoteData(users, keys); } catch(e) { console.warn(e); }
+  document.getElementById('adminKeyInput').value = '';
+  setProfileStatus(`Ключ создан: ${key} (${label})`, 'success');
+  showToast('Ключ создан', 'success');
 }
