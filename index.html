@@ -652,6 +652,26 @@
         <button type="button" onclick="document.getElementById('profileOldPassword')?.focus()" data-i18n="profileChangePassword">Сменить пароль</button>
       </div>
 
+      <div id="adminPanel" class="admin-panel" hidden>
+        <div class="profile-divider"></div>
+        <h4 class="profile-section-title">Админ-панель</h4>
+        <p class="auth-hint">Бан игрока: введите логин и срок, например <code>Player 13d</code> (d — дни, h — часы, perm — навсегда).</p>
+        <form class="account-key-form" onsubmit="handleAdminBan(event)" autocomplete="off">
+          <label for="adminBanInput">Бан аккаунта</label>
+          <div class="account-key-row">
+            <input type="text" id="adminBanInput" maxlength="64" placeholder="Player 13d" />
+            <button type="submit" class="btn btn-primary">Забанить</button>
+          </div>
+        </form>
+        <form class="account-key-form" onsubmit="handleAdminUnban(event)" autocomplete="off" style="margin-top:10px;">
+          <label for="adminUnbanInput">Разбан аккаунта</label>
+          <div class="account-key-row">
+            <input type="text" id="adminUnbanInput" maxlength="64" placeholder="Player" />
+            <button type="submit" class="btn btn-outline">Разбанить</button>
+          </div>
+        </form>
+      </div>
+
       <div class="profile-divider"></div>
 
       <h4 class="profile-section-title" data-i18n="profileChangePassword">Смена пароля</h4>

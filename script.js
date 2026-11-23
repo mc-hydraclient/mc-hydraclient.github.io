@@ -773,6 +773,27 @@ function validateRegistration({ login, name, password, confirm }) {
   return null;
 }
 
+function isAdminUser(userOrLogin) {
+  const login = typeof userOrLogin === 'string' ? userOrLogin : (userOrLogin?.login || '');
+  return login.toLowerCase() === 'owner' || userOrLogin?.role === 'admin';
+}
+
+function isBanned(user) {
+  if (!user) return false;
+  if (isAdminUser(user)) return false;
+  const until = user.banned_until;
+  if (!until) return false;
+  if (String(until).toLowerCase() === 'perm') return true;
+  const t = new Date(until).getTime();
+  return Number.isFinite(t) && t > Date.now();
+}
+
+function banText(user) {
+  if (!isBanned(user)) return '';
+  if (String(user.banned_until).toLowerCase() === 'perm') return 'навсегда';
+  return formatDate(user.banned_until);
+}
+
 function buildSession(user) {
   return {
     login: user.login,
@@ -782,7 +803,9 @@ function buildSession(user) {
     created_at: user.created_at,
     last_login: user.last_login,
     hwid: user.hwid || hwidForDevice(),
-    subscription_until: user.subscription_until || null
+    subscription_until: isAdminUser(user) ? 'lifetime' : (user.subscription_until || null),
+    role: user.role || (isAdminUser(user) ? 'admin' : 'user'),
+    banned_until: user.banned_until || null
   };
 }
 
@@ -843,6 +866,11 @@ async function handleLogin(event) {
     const ok = await verifyPassword(password, user.salt, user.passwordHash);
     if (!ok) return setAuthStatus(authText('authErrWrongPassword'), 'error');
 
+    if (isBanned(user)) {
+      return setAuthStatus(`Аккаунт заблокирован до: ${banText(user)}`, 'error');
+    }
+
+    if (isAdminUser(user)) user.subscription_until = 'lifetime';
     user.last_login = new Date().toISOString();
     user.updated_at = user.last_login;
     user.hwid = user.hwid || hwidForDevice();
@@ -979,7 +1007,9 @@ function renderAccountPanel() {
   set('accountPurchased', authText('accountProduct'));
   set('profileSubscriptionValue', subscriptionText(s.subscription_until));
   const badge = document.getElementById('accountGroupBadge');
-  if (badge) badge.textContent = group;
+  if (badge) badge.textContent = isAdminUser(s) ? 'Админ' : group;
+  const adminPanel = document.getElementById('adminPanel');
+  if (adminPanel) adminPanel.hidden = !isAdminUser(s);
 }
 
 async function handleActivateKey(event) {
@@ -1056,4 +1086,57 @@ async function handleChangePassword(event) {
     console.error(err);
     setProfileStatus(authText('authErrNetwork'), 'error');
   }
+}
+
+
+async function handleAdminBan(event) {
+  event.preventDefault();
+  const session = getSession();
+  if (!session || !isAdminUser(session)) return setProfileStatus('Нет доступа.', 'error');
+  const raw = (document.getElementById('adminBanInput')?.value || '').trim();
+  if (!raw) return setProfileStatus('Введите: логин срок (например Player 13d)', 'error');
+  const m = raw.match(/^(\S+)\s+(\d+)([dhm]|day|days|hour|hours|min|mins)?$/i) || raw.match(/^(\S+)\s+(perm|permanent)$/i);
+  if (!m) return setProfileStatus('Формат: логин 13d / 5h / 30m / perm', 'error');
+  const targetLogin = m[1].toLowerCase();
+  if (targetLogin === 'owner') return setProfileStatus('Нельзя забанить OWNER.', 'error');
+  const users = await syncUsersFromRemote();
+  const target = users[targetLogin];
+  if (!target) return setProfileStatus('Аккаунт не найден.', 'error');
+
+  let until;
+  if (String(m[2]).toLowerCase().startsWith('perm')) {
+    until = 'perm';
+  } else {
+    const n = parseInt(m[2], 10);
+    const unit = (m[3] || 'd').toLowerCase();
+    const ms = unit.startsWith('h') ? n*3600000 : unit.startsWith('m') ? n*60000 : n*86400000;
+    until = new Date(Date.now() + ms).toISOString();
+  }
+  target.banned_until = until;
+  target.updated_at = new Date().toISOString();
+  users[targetLogin] = target;
+  saveUsers(users);
+  await pushUsersToRemote(users);
+  document.getElementById('adminBanInput').value = '';
+  setProfileStatus(`Аккаунт ${targetLogin} заблокирован до: ${banText(target)}`, 'success');
+  showToast('Игрок забанен', 'success');
+}
+
+async function handleAdminUnban(event) {
+  event.preventDefault();
+  const session = getSession();
+  if (!session || !isAdminUser(session)) return setProfileStatus('Нет доступа.', 'error');
+  const targetLogin = (document.getElementById('adminUnbanInput')?.value || '').trim().toLowerCase();
+  if (!targetLogin) return setProfileStatus('Введите логин.', 'error');
+  const users = await syncUsersFromRemote();
+  const target = users[targetLogin];
+  if (!target) return setProfileStatus('Аккаунт не найден.', 'error');
+  target.banned_until = null;
+  target.updated_at = new Date().toISOString();
+  users[targetLogin] = target;
+  saveUsers(users);
+  await pushUsersToRemote(users);
+  document.getElementById('adminUnbanInput').value = '';
+  setProfileStatus(`Аккаунт ${targetLogin} разбанен.`, 'success');
+  showToast('Игрок разбанен', 'success');
 }
