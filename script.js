@@ -368,8 +368,37 @@ function getBotUrl(planId) {
   return `${base}${sep}start=${encodeURIComponent(planId)}`;
 }
 
-function handleBuy(planId, duration, price) {
+async function handleBuy(planId, duration, price) {
   const t = CONFIG.i18n[currentLang];
+  const backendUrl = (CONFIG.payment?.backendUrl || '').trim().replace(/\/+$/, '');
+  const session = typeof getSession === 'function' ? getSession() : null;
+
+  if (backendUrl) {
+    if (!session) {
+      showToast('Войдите в аккаунт, чтобы купить подписку', 'error');
+      openAuth('login');
+      return;
+    }
+    try {
+      showToast('Создаём платёж...', 'success');
+      const resp = await fetch(`${backendUrl}/api/payment/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login: session.login, plan_id: planId, success_url: location.href, fail_url: location.href })
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || !data.ok || !data.paymentUrl) {
+        throw new Error(data.error || 'Не удалось создать платёж');
+      }
+      window.location.href = data.paymentUrl;
+      return;
+    } catch (e) {
+      console.error(e);
+      showToast(e.message || 'Ошибка оплаты', 'error');
+      return;
+    }
+  }
+
   const url = getBotUrl(planId);
   const overlay = document.getElementById('modalPayment');
   const title   = document.getElementById('paymentPopupTitle');

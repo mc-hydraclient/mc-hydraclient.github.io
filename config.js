@@ -216,6 +216,8 @@ const CONFIG = {
     // Ссылка на Telegram-бота магазина (замените на своего после создания в @BotFather)
     botUrl: "https://t.me/HydraClientStoreBot",
     popupContact: "https://t.me/HydraClientStoreBot",
+    // URL backend для авто-оплаты Tinkoff (Koyeb/VM). Пример: https://your-app.koyeb.app
+    backendUrl: "",
   },
 
   // ─── ПЕРЕВОДЫ UI ─────────────────────────────────────────
