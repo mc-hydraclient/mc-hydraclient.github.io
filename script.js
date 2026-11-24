@@ -359,53 +359,34 @@ function buildPricing() {
 }
 
 /* ════════════════════════════════════════
-   ПОКУПКА — логика из config.js → payment
+   ПОКУПКА — через Telegram-бота
 ════════════════════════════════════════ */
-function handleBuy(planId, duration, price) {
-  const pay = CONFIG.payment;
-  const t   = CONFIG.i18n[currentLang];
-
-  // ── Вариант 1: Редирект на внешнюю страницу ──────────────
-  if (pay.useRedirect) {
-    const url = pay.redirectUrls?.[planId];
-    if (url) {
-      window.open(url, '_blank', 'noopener');
-    } else {
-      showToast('URL не задан в config.js → payment.redirectUrls', 'error');
-    }
-    return;
-  }
-
-  // ── Вариант 2: Попап с контактом для оплаты ──────────────
-  if (pay.usePopup) {
-    showPaymentPopup(planId, duration, price);
-    return;
-  }
-
-  // ── Вариант 3: Кастомная логика (для разработчика) ────────
-  // Пример: showToast(`${duration} — ${price}`, 'success');
-  // Здесь можно подключить Stripe, LiqPay, WebMoney и т.д.
-  showToast(`${duration} — ${price}`, 'success');
+function getBotUrl(planId) {
+  const base = (CONFIG.payment?.botUrl || CONFIG.payment?.popupContact || 'https://t.me/HydraClientStoreBot').trim();
+  if (!planId) return base;
+  const sep = base.includes('?') ? '&' : '?';
+  return `${base}${sep}start=${encodeURIComponent(planId)}`;
 }
 
-/* Попап оплаты (Вариант 2) */
-function showPaymentPopup(planId, duration, price) {
+function handleBuy(planId, duration, price) {
   const t = CONFIG.i18n[currentLang];
-  const link = CONFIG.payment.popupContact;
-
+  const url = getBotUrl(planId);
   const overlay = document.getElementById('modalPayment');
   const title   = document.getElementById('paymentPopupTitle');
   const body    = document.getElementById('paymentPopupBody');
   const linkEl  = document.getElementById('paymentPopupLink');
 
-  if (!overlay) return;
+  if (overlay && title && body && linkEl) {
+    title.textContent = `${t.paymentPopupTitle} — ${duration} (${price})`;
+    body.textContent  = t.paymentPopupText;
+    linkEl.href = url;
+    linkEl.textContent = t.paymentPopupOpenBot || 'Открыть Telegram-бота';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
 
-  if (title) title.textContent = `${t.paymentPopupTitle} — ${duration} (${price})`;
-  if (body)  body.textContent  = t.paymentPopupText;
-  if (linkEl) linkEl.href = link;
-
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  window.open(url, '_blank', 'noopener');
 }
 
 /* ════════════════════════════════════════

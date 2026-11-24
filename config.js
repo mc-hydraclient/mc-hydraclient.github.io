@@ -220,30 +220,15 @@ const CONFIG = {
   },
 
   // ─── СИСТЕМА ОПЛАТЫ ──────────────────────────────────────
-  // Когда пользователь нажимает "Купить", вызывается handleBuy().
-  // Выберите ОДИН из вариантов ниже и раскомментируйте нужный.
+  // Покупка ведёт в Telegram-бота. Бот показывает каталог, принимает оплату,
+  // подтверждает платёж и выдаёт ключ после успешной покупки.
   payment: {
-
-    // ── ВАРИАНТ 1: Перенаправление на внешнюю страницу оплаты ──────────────
-    // Укажите URL вашего магазина / платёжной страницы для каждого тарифа.
-    // Если useRedirect = true — при клике "Купить" откроется эта ссылка.
-    useRedirect: false,                  // ← Поставьте true чтобы включить
-    redirectUrls: {
-      month:    "https://your-shop.com/buy/month",    // ← URL для 1 месяца
-      "3months":"https://your-shop.com/buy/3months",  // ← URL для 3 месяцев
-      "6months":"https://your-shop.com/buy/6months",  // ← URL для 6 месяцев
-      lifetime: "https://your-shop.com/buy/lifetime"  // ← URL для Lifetime
-    },
-
-    // ── ВАРИАНТ 2: Открытие всплывающего окна с реквизитами ────────────────
-    // Если usePopup = true — при клике "Купить" появится окно с инструкцией.
-    usePopup: true,                      // ← Поставьте true чтобы включить
-    popupContact: "https://www.tbank-online.com/rm/r_ajBGRXWQJC.GtagUthLNg/LBVlg49270", // ← Куда писать для оплаты (Telegram/Discord)
-
-    // ── ВАРИАНТ 3: Кастомная функция (для разработчиков) ───────────────────
-    // Оставьте useRedirect и usePopup = false.
-    // Напишите свою логику прямо в функции handleBuy() в script.js.
-    // Пример: интеграция Stripe, LiqPay, WebMoney и т.д.
+    useRedirect: false,
+    redirectUrls: {},
+    usePopup: true,
+    // Ссылка на Telegram-бота магазина (замените на своего после создания в @BotFather)
+    botUrl: "https://t.me/HydraClientStoreBot",
+    popupContact: "https://t.me/HydraClientStoreBot",
   },
 
   // ─── ПЕРЕВОДЫ UI ─────────────────────────────────────────
@@ -369,9 +354,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Политика обработки персональных данных будет опубликована в ближайшее время. Для вопросов — обратитесь в поддержку.",
       modalTermsDesc:       "Пользовательское соглашение будет опубликовано в ближайшее время.",
       modalRulesDesc:       "Правила пользования сервисом будут опубликованы в ближайшее время.",
-      paymentPopupTitle:    "Оплата подписки",
-      paymentPopupText:     "Оплатите подписку через Тинькофф/СБП по ссылке ниже. После оплаты вы получите ключ — активируйте его в личном кабинете в разделе \"Активировать ключ\".",
+      paymentPopupTitle:    "Покупка через Telegram-бота",
+      paymentPopupText:     "Откройте Telegram-бота для покупки. Бот покажет каталог, примет оплату, подтвердит её и автоматически выдаст ключ после успешной оплаты. Активируйте ключ в личном кабинете.",
       paymentPopupClose:    "Закрыть",
+      paymentPopupOpenBot:  "Открыть Telegram-бота",
       videoHint:            "Видео скоро появится здесь"
     },
     en: {
@@ -495,9 +481,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Privacy policy will be published soon. For questions — contact support.",
       modalTermsDesc:       "Terms of service will be published soon.",
       modalRulesDesc:       "Usage rules will be published soon.",
-      paymentPopupTitle:    "Subscription payment",
-      paymentPopupText:     "Pay via Tinkoff/SBP using the link below. After payment you will receive a key — activate it in your profile under \"Activate key\".",
+      paymentPopupTitle:    "Buy via Telegram bot",
+      paymentPopupText:     "Open the Telegram bot to purchase. The bot shows the catalog, accepts payment, confirms it, and automatically issues a key after successful payment. Activate the key in your profile.",
       paymentPopupClose:    "Close",
+      paymentPopupOpenBot:  "Open Telegram bot",
       videoHint:            "Video coming soon"
     },
     uk: {
@@ -621,9 +608,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Політика обробки персональних даних буде опублікована найближчим часом.",
       modalTermsDesc:       "Угода користувача буде опублікована найближчим часом.",
       modalRulesDesc:       "Правила користування будуть опубліковані найближчим часом.",
-      paymentPopupTitle:    "Оформлення покупки",
-      paymentPopupText:     "Для оформлення покупки зв'яжіться з нами:",
+      paymentPopupTitle:    "Купівля через Telegram-бота",
+      paymentPopupText:     "Відкрийте Telegram-бота для покупки. Бот покаже каталог, прийме оплату, підтвердить її та автоматично видасть ключ після успішної оплати. Активуйте ключ в особистому кабінеті.",
       paymentPopupClose:    "Закрити",
+      paymentPopupOpenBot:  "Відкрити Telegram-бота",
       videoHint:            "Відео незабаром з'явиться тут"
     },
     pl: {
@@ -747,9 +735,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Polityka prywatności zostanie opublikowana wkrótce.",
       modalTermsDesc:       "Regulamin zostanie opublikowany wkrótce.",
       modalRulesDesc:       "Zasady użytkowania zostaną opublikowane wkrótce.",
-      paymentPopupTitle:    "Zakup",
-      paymentPopupText:     "Aby sfinalizować zakup, skontaktuj się z nami:",
+      paymentPopupTitle:    "Zakup przez bota Telegram",
+      paymentPopupText:     "Otwórz bota Telegram, aby dokonać zakupu. Bot pokaże katalog, przyjmie płatność, potwierdzi ją i automatycznie wyda klucz po udanej płatności. Aktywuj klucz w profilu.",
       paymentPopupClose:    "Zamknij",
+      paymentPopupOpenBot:  "Otwórz bota Telegram",
       videoHint:            "Film pojawi się tutaj wkrótce"
     },
     tr: {
@@ -876,6 +865,7 @@ const CONFIG = {
       paymentPopupTitle:    "Satın Alma",
       paymentPopupText:     "Satın alma işlemi için bizimle iletişime geçin:",
       paymentPopupClose:    "Kapat",
+      paymentPopupOpenBot:  "Telegram botunu aç",
       videoHint:            "Video yakında burada görünecek"
     }
   },
