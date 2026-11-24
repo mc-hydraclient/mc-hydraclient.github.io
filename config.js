@@ -238,7 +238,7 @@ const CONFIG = {
     // ── ВАРИАНТ 2: Открытие всплывающего окна с реквизитами ────────────────
     // Если usePopup = true — при клике "Купить" появится окно с инструкцией.
     usePopup: true,                      // ← Поставьте true чтобы включить
-    popupContact: "https://t.me/YOUR_TINKOFF_CONTACT", // ← Куда писать для оплаты (Telegram/Discord)
+    popupContact: "https://www.tbank-online.com/rm/r_ajBGRXWQJC.GtagUthLNg/LBVlg49270", // ← Куда писать для оплаты (Telegram/Discord)
 
     // ── ВАРИАНТ 3: Кастомная функция (для разработчиков) ───────────────────
     // Оставьте useRedirect и usePopup = false.
