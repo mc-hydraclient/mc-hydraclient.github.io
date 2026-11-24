@@ -1019,7 +1019,7 @@ function subscriptionText(until) {
   if (!until) return authText('profileNoSubscription');
   if (isLifetime(until)) return authText('profileLifetime');
   const diff = new Date(until).getTime() - Date.now();
-  if (!Number.isFinite(diff) || diff <= 0) return authText('profileExpired');
+  if (!Number.isFinite(diff) || diff <= 0) return `${authText('profileDaysLeft')} 0`.trim();
   const days = Math.ceil(diff / (24 * 60 * 60 * 1000));
   return `${authText('profileDaysLeft')} ${days}`.trim();
 }
