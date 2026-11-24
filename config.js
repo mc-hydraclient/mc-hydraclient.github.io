@@ -342,7 +342,7 @@ const CONFIG = {
       modalTermsDesc:       "Пользовательское соглашение будет опубликовано в ближайшее время.",
       modalRulesDesc:       "Правила пользования сервисом будут опубликованы в ближайшее время.",
       paymentPopupTitle:    "Покупка через Telegram-бота",
-      paymentPopupText:     "Откройте Telegram-бота для покупки. Бот покажет каталог, примет оплату, подтвердит её и автоматически выдаст ключ после успешной оплаты. Активируйте ключ в личном кабинете.",
+      paymentPopupText:     "Откройте Telegram-бота. Бот покажет каталог, даст ссылку на оплату Тинькофф, а после подтверждения оплаты администратором автоматически выдаст ключ. Активируйте ключ в личном кабинете.",
       paymentPopupClose:    "Закрыть",
       paymentPopupOpenBot:  "Открыть Telegram-бота",
       videoHint:            "Видео скоро появится здесь"
@@ -469,7 +469,7 @@ const CONFIG = {
       modalTermsDesc:       "Terms of service will be published soon.",
       modalRulesDesc:       "Usage rules will be published soon.",
       paymentPopupTitle:    "Buy via Telegram bot",
-      paymentPopupText:     "Open the Telegram bot to purchase. The bot shows the catalog, accepts payment, confirms it, and automatically issues a key after successful payment. Activate the key in your profile.",
+      paymentPopupText:     "Open the Telegram bot. It shows the catalog, gives a Tinkoff payment link, and after the admin confirms payment it automatically issues a key. Activate the key in your profile.",
       paymentPopupClose:    "Close",
       paymentPopupOpenBot:  "Open Telegram bot",
       videoHint:            "Video coming soon"
@@ -596,7 +596,7 @@ const CONFIG = {
       modalTermsDesc:       "Угода користувача буде опублікована найближчим часом.",
       modalRulesDesc:       "Правила користування будуть опубліковані найближчим часом.",
       paymentPopupTitle:    "Купівля через Telegram-бота",
-      paymentPopupText:     "Відкрийте Telegram-бота для покупки. Бот покаже каталог, прийме оплату, підтвердить її та автоматично видасть ключ після успішної оплати. Активуйте ключ в особистому кабінеті.",
+      paymentPopupText:     "Відкрийте Telegram-бота. Бот покаже каталог, дасть посилання на оплату Тінькофф, а після підтвердження оплати адміністратором автоматично видасть ключ. Активуйте ключ в особистому кабінеті.",
       paymentPopupClose:    "Закрити",
       paymentPopupOpenBot:  "Відкрити Telegram-бота",
       videoHint:            "Відео незабаром з'явиться тут"
@@ -723,7 +723,7 @@ const CONFIG = {
       modalTermsDesc:       "Regulamin zostanie opublikowany wkrótce.",
       modalRulesDesc:       "Zasady użytkowania zostaną opublikowane wkrótce.",
       paymentPopupTitle:    "Zakup przez bota Telegram",
-      paymentPopupText:     "Otwórz bota Telegram, aby dokonać zakupu. Bot pokaże katalog, przyjmie płatność, potwierdzi ją i automatycznie wyda klucz po udanej płatności. Aktywuj klucz w profilu.",
+      paymentPopupText:     "Otwórz bota Telegram. Bot pokaże katalog, poda link do płatności Tinkoff, a po potwierdzeniu płatności przez administratora automatycznie wyda klucz. Aktywuj klucz w profilu.",
       paymentPopupClose:    "Zamknij",
       paymentPopupOpenBot:  "Otwórz bota Telegram",
       videoHint:            "Film pojawi się tutaj wkrótce"
