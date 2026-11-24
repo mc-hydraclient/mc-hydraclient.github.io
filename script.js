@@ -897,6 +897,11 @@ async function handleRegister(event) {
     };
     saveUsers(users);
     remoteCache = { at: Date.now(), users, keys: loadKeys(), inflight: null };
+    try {
+      await pushUsersToRemote(users, loadKeys());
+    } catch (e) {
+      console.warn('Remote push failed after register', e);
+    }
 
     document.getElementById('authRegisterForm')?.reset();
     const loginInput = document.getElementById('authLoginInput');
@@ -904,7 +909,6 @@ async function handleRegister(event) {
     setAuthTab('login');
     setAuthStatus(authText('authSuccessRegistered'), 'success');
     showToast(authText('authSuccessRegistered'), 'success');
-    pushRemoteDataAsync(users, loadKeys());
   } catch (err) {
     console.error(err);
     setAuthStatus(authText('authErrNetwork'), 'error');
