@@ -159,61 +159,48 @@ const CONFIG = {
 
   // ─── ТАРИФЫ ──────────────────────────────────────────────
   pricing: {
-    currency: "$",        // Символ валюты ($ / € / ₽ и т.д.)
-    badge: {              // Надпись на популярном тарифе
-      ru: "Популярно", en: "Popular", uk: "Популярно", pl: "Popularny", tr: "Popüler"
+    currency: "₽",        // Символ валюты
+    badge: {
+      ru: "Выгодно", en: "Best value", uk: "Вигідно", pl: "Opłacalny", tr: "Avantajlı"
     },
     plans: [
       {
         id: "month",
-        duration: { ru:"1 Месяц",   en:"1 Month",   uk:"1 Місяць",  pl:"1 Miesiąc", tr:"1 Ay"      },
-        price:    9.99,             // ← Цена (число)
-        popular:  false,
+        duration: { ru:"1 Месяц", en:"1 Month", uk:"1 Місяць", pl:"1 Miesiąc", tr:"1 Ay" },
+        price: 129,
+        popular: false,
         features: {
-          ru: ["Все функции клиента", "Базовая поддержка", "Обновления включены"],
-          en: ["All client features", "Basic support",     "Updates included"],
-          uk: ["Всі функції клієнта", "Базова підтримка",  "Оновлення включені"],
-          pl: ["Wszystkie funkcje",   "Podstawowe wsparcie","Aktualizacje wliczone"],
-          tr: ["Tüm özellikler",      "Temel destek",       "Güncellemeler dahil"]
+          ru: ["Все функции клиента", "Поддержка", "Обновления включены"],
+          en: ["All client features", "Support", "Updates included"],
+          uk: ["Всі функції клієнта", "Підтримка", "Оновлення включені"],
+          pl: ["Wszystkie funkcje", "Wsparcie", "Aktualizacje wliczone"],
+          tr: ["Tüm özellikler", "Destek", "Güncellemeler dahil"]
         }
       },
       {
-        id: "3months",
-        duration: { ru:"3 Месяца",  en:"3 Months",  uk:"3 Місяці",  pl:"3 Miesiące", tr:"3 Ay"     },
-        price:    24.99,
-        popular:  true,             // ← true = выделить как лучший вариант
+        id: "year",
+        duration: { ru:"1 Год", en:"1 Year", uk:"1 Рік", pl:"1 Rok", tr:"1 Yıl" },
+        price: 300,
+        popular: true,
         features: {
-          ru: ["Все функции клиента", "Приоритетная поддержка", "Обновления включены", "Доступ к бета-версиям"],
-          en: ["All client features", "Priority support",        "Updates included",    "Beta access"],
-          uk: ["Всі функції клієнта", "Пріоритетна підтримка",   "Оновлення включені",  "Доступ до бета"],
-          pl: ["Wszystkie funkcje",   "Wsparcie priorytetowe",   "Aktualizacje wliczone","Dostęp do beta"],
-          tr: ["Tüm özellikler",      "Öncelikli destek",        "Güncellemeler dahil",  "Beta erişimi"]
-        }
-      },
-      {
-        id: "6months",
-        duration: { ru:"6 Месяцев", en:"6 Months",  uk:"6 Місяців", pl:"6 Miesięcy",  tr:"6 Ay"     },
-        price:    39.99,
-        popular:  false,
-        features: {
-          ru: ["Все функции клиента", "Приоритетная поддержка", "Обновления включены", "Доступ к бета-версиям", "Скидка 33%"],
-          en: ["All client features", "Priority support",        "Updates included",    "Beta access",           "33% off"],
-          uk: ["Всі функції клієнта", "Пріоритетна підтримка",   "Оновлення включені",  "Доступ до бета",         "Знижка 33%"],
-          pl: ["Wszystkie funkcje",   "Wsparcie priorytetowe",   "Aktualizacje wliczone","Dostęp do beta",         "33% zniżki"],
-          tr: ["Tüm özellikler",      "Öncelikli destek",        "Güncellemeler dahil",  "Beta erişimi",           "%33 indirim"]
+          ru: ["Все функции клиента", "Приоритетная поддержка", "Обновления включены", "Выгодная цена"],
+          en: ["All client features", "Priority support", "Updates included", "Best value"],
+          uk: ["Всі функції клієнта", "Пріоритетна підтримка", "Оновлення включені", "Вигідна ціна"],
+          pl: ["Wszystkie funkcje", "Wsparcie priorytetowe", "Aktualizacje wliczone", "Najlepsza cena"],
+          tr: ["Tüm özellikler", "Öncelikli destek", "Güncellemeler dahil", "Avantajlı fiyat"]
         }
       },
       {
         id: "lifetime",
-        duration: { ru:"Lifetime",  en:"Lifetime",  uk:"Назавжди",  pl:"Na zawsze",  tr:"Ömür boyu" },
-        price:    79.99,
-        popular:  false,
+        duration: { ru:"Навсегда", en:"Lifetime", uk:"Назавжди", pl:"Na zawsze", tr:"Ömür boyu" },
+        price: 459,
+        popular: false,
         features: {
-          ru: ["Все функции клиента", "VIP поддержка 24/7", "Все обновления навсегда", "Ранний доступ", "Эксклюзивный ранг"],
-          en: ["All client features", "VIP support 24/7",   "All updates forever",     "Early access",   "Exclusive rank"],
-          uk: ["Всі функції клієнта", "VIP підтримка 24/7", "Всі оновлення назавжди",  "Ранній доступ",  "Ексклюзивний ранг"],
-          pl: ["Wszystkie funkcje",   "VIP wsparcie 24/7",  "Wszystkie aktualizacje",  "Wczesny dostęp", "Ekskluzywna ranga"],
-          tr: ["Tüm özellikler",      "VIP destek 24/7",    "Tüm güncellemeler",        "Erken erişim",   "Özel Discord rolü"]
+          ru: ["Все функции клиента", "VIP поддержка", "Все обновления навсегда", "Ранний доступ"],
+          en: ["All client features", "VIP support", "All updates forever", "Early access"],
+          uk: ["Всі функції клієнта", "VIP підтримка", "Всі оновлення назавжди", "Ранній доступ"],
+          pl: ["Wszystkie funkcje", "VIP wsparcie", "Wszystkie aktualizacje", "Wczesny dostęp"],
+          tr: ["Tüm özellikler", "VIP destek", "Tüm güncellemeler", "Erken erişim"]
         }
       }
     ]
