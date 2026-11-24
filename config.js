@@ -237,8 +237,8 @@ const CONFIG = {
 
     // ── ВАРИАНТ 2: Открытие всплывающего окна с реквизитами ────────────────
     // Если usePopup = true — при клике "Купить" появится окно с инструкцией.
-    usePopup: false,                     // ← Поставьте true чтобы включить
-    popupContact: "https://t.me/XXXXXXX", // ← Куда писать для оплаты (Telegram/Discord)
+    usePopup: true,                      // ← Поставьте true чтобы включить
+    popupContact: "https://t.me/YOUR_TINKOFF_CONTACT", // ← Куда писать для оплаты (Telegram/Discord)
 
     // ── ВАРИАНТ 3: Кастомная функция (для разработчиков) ───────────────────
     // Оставьте useRedirect и usePopup = false.
@@ -369,8 +369,8 @@ const CONFIG = {
       modalPrivacyDesc:     "Политика обработки персональных данных будет опубликована в ближайшее время. Для вопросов — обратитесь в поддержку.",
       modalTermsDesc:       "Пользовательское соглашение будет опубликовано в ближайшее время.",
       modalRulesDesc:       "Правила пользования сервисом будут опубликованы в ближайшее время.",
-      paymentPopupTitle:    "Оформление покупки",
-      paymentPopupText:     "Для оформления покупки свяжитесь с нами:",
+      paymentPopupTitle:    "Оплата подписки",
+      paymentPopupText:     "Оплатите подписку через Тинькофф/СБП по ссылке ниже. После оплаты вы получите ключ — активируйте его в личном кабинете в разделе \"Активировать ключ\".",
       paymentPopupClose:    "Закрыть",
       videoHint:            "Видео скоро появится здесь"
     },
@@ -495,8 +495,8 @@ const CONFIG = {
       modalPrivacyDesc:     "Privacy policy will be published soon. For questions — contact support.",
       modalTermsDesc:       "Terms of service will be published soon.",
       modalRulesDesc:       "Usage rules will be published soon.",
-      paymentPopupTitle:    "Purchase",
-      paymentPopupText:     "To complete your purchase, contact us:",
+      paymentPopupTitle:    "Subscription payment",
+      paymentPopupText:     "Pay via Tinkoff/SBP using the link below. After payment you will receive a key — activate it in your profile under \"Activate key\".",
       paymentPopupClose:    "Close",
       videoHint:            "Video coming soon"
     },
