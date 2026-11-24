@@ -875,6 +875,10 @@ async function handleRegister(event) {
   const login = data.login.toLowerCase();
   const users = await syncUsersFromRemote();
   if (users[login]) return setAuthStatus(authText('authErrLoginTaken'), 'error');
+  const nameLower = data.name.toLowerCase();
+  if (Object.values(users).some(u => String(u?.name || '').toLowerCase() === nameLower)) {
+    return setAuthStatus(authText('authErrNameTaken'), 'error');
+  }
 
   try {
     const { hash, salt } = await hashPassword(data.password);
@@ -1302,3 +1306,13 @@ async function handleAdminCreateKey(event) {
   showToast('Ключ создан', 'success');
   pushRemoteDataAsync(users, keys);
 }
+
+// Gate launcher download behind registration/login
+document.addEventListener('click', function(e) {
+  const a = e.target.closest('a[href="HydraClient-Launcher.exe"], a[href$="/HydraClient-Launcher.exe"]');
+  if (!a) return;
+  if (getSession()) return;
+  e.preventDefault();
+  showToast('Для скачивания лаунчера необходимо зарегистрироваться и войти в аккаунт.', 'error');
+  openAuth('register');
+});
