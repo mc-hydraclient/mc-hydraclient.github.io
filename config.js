@@ -343,10 +343,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Политика обработки персональных данных будет опубликована в ближайшее время. Для вопросов — обратитесь в поддержку.",
       modalTermsDesc:       "Пользовательское соглашение будет опубликовано в ближайшее время.",
       modalRulesDesc:       "Правила пользования сервисом будут опубликованы в ближайшее время.",
-      paymentPopupTitle:    "Покупка через Telegram-бота",
-      paymentPopupText:     "Откройте Telegram-бота. Бот покажет каталог, даст ссылку на оплату Тинькофф, а после подтверждения оплаты администратором автоматически выдаст ключ. Активируйте ключ в личном кабинете.",
+      paymentPopupTitle:    "Заказы принимает реальный человек",
+      paymentPopupText:     "Напишите к нашему официальному Администратору и после того как вы оплатили выбранный вами товар наш Администратор скидывает вам ключ на подписку.",
       paymentPopupClose:    "Закрыть",
-      paymentPopupOpenBot:  "Открыть Telegram-бота",
+      paymentPopupOpenBot:  "Написать администратору",
       videoHint:            "Видео скоро появится здесь"
     },
     en: {
@@ -470,10 +470,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Privacy policy will be published soon. For questions — contact support.",
       modalTermsDesc:       "Terms of service will be published soon.",
       modalRulesDesc:       "Usage rules will be published soon.",
-      paymentPopupTitle:    "Buy via Telegram bot",
-      paymentPopupText:     "Open the Telegram bot. It shows the catalog, gives a Tinkoff payment link, and after the admin confirms payment it automatically issues a key. Activate the key in your profile.",
+      paymentPopupTitle:    "Orders are handled by a real person",
+      paymentPopupText:     "Message our official administrator. After you pay for the selected product, the administrator will send you a subscription key.",
       paymentPopupClose:    "Close",
-      paymentPopupOpenBot:  "Open Telegram bot",
+      paymentPopupOpenBot:  "Message administrator",
       videoHint:            "Video coming soon"
     },
     uk: {
@@ -597,10 +597,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Політика обробки персональних даних буде опублікована найближчим часом.",
       modalTermsDesc:       "Угода користувача буде опублікована найближчим часом.",
       modalRulesDesc:       "Правила користування будуть опубліковані найближчим часом.",
-      paymentPopupTitle:    "Купівля через Telegram-бота",
-      paymentPopupText:     "Відкрийте Telegram-бота. Бот покаже каталог, дасть посилання на оплату Тінькофф, а після підтвердження оплати адміністратором автоматично видасть ключ. Активуйте ключ в особистому кабінеті.",
+      paymentPopupTitle:    "Замовлення приймає реальна людина",
+      paymentPopupText:     "Напишіть нашому офіційному адміністратору, і після того як ви оплатите обраний товар, адміністратор надішле вам ключ на підписку.",
       paymentPopupClose:    "Закрити",
-      paymentPopupOpenBot:  "Відкрити Telegram-бота",
+      paymentPopupOpenBot:  "Написати адміністратору",
       videoHint:            "Відео незабаром з'явиться тут"
     },
     pl: {
@@ -724,10 +724,10 @@ const CONFIG = {
       modalPrivacyDesc:     "Polityka prywatności zostanie opublikowana wkrótce.",
       modalTermsDesc:       "Regulamin zostanie opublikowany wkrótce.",
       modalRulesDesc:       "Zasady użytkowania zostaną opublikowane wkrótce.",
-      paymentPopupTitle:    "Zakup przez bota Telegram",
-      paymentPopupText:     "Otwórz bota Telegram. Bot pokaże katalog, poda link do płatności Tinkoff, a po potwierdzeniu płatności przez administratora automatycznie wyda klucz. Aktywuj klucz w profilu.",
+      paymentPopupTitle:    "Zamówienia przyjmuje prawdziwa osoba",
+      paymentPopupText:     "Napisz do naszego oficjalnego administratora. Po opłaceniu wybranego produktu administrator wyśle Ci klucz subskrypcji.",
       paymentPopupClose:    "Zamknij",
-      paymentPopupOpenBot:  "Otwórz bota Telegram",
+      paymentPopupOpenBot:  "Napisz do administratora",
       videoHint:            "Film pojawi się tutaj wkrótce"
     },
     tr: {
@@ -854,7 +854,7 @@ const CONFIG = {
       paymentPopupTitle:    "Satın Alma",
       paymentPopupText:     "Satın alma işlemi için bizimle iletişime geçin:",
       paymentPopupClose:    "Kapat",
-      paymentPopupOpenBot:  "Telegram botunu aç",
+      paymentPopupOpenBot:  "Yöneticiye yaz",
       videoHint:            "Video yakında burada görünecek"
     }
   },
