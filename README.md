@@ -70,7 +70,6 @@ style.css
 script.js
 config.js
 HydraClient-Launcher.exe
-HydraClient-1.21.11.jar
 README.md
 ```
 
